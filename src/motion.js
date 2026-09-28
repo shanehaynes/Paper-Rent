@@ -46,10 +46,12 @@ function beatTimeline(sc, beat, els) {
     const from = r.dataset.grow === 'v' ? { y: base, height: 0 } : { x: base, width: 0 };
     tl.from(r, { attr: from, duration: 0.5 }, 0.1 + (k / Math.max(grows.length, 1)) * 0.45);
   });
+  // Labels wait for the last bar to finish growing.
+  const grown = grows.length ? 0.1 + ((grows.length - 1) / grows.length) * 0.45 + 0.5 : 0.35;
   pops.forEach((p, k) => {
-    tl.from(p, { opacity: 0, y: 14, duration: 0.35 }, 0.35 + (k / Math.max(pops.length, 1)) * 0.4);
+    tl.from(p, { opacity: 0, y: 14, duration: 0.35 }, grown + (k / Math.max(pops.length, 1)) * 0.4);
   });
-  tl.to({}, { duration: 0.01 }, 1);
+  tl.to({}, { duration: 0.01 }, Math.max(1, tl.duration()));
 }
 
 function heroMotion(sc) {
@@ -68,7 +70,7 @@ function heroMotion(sc) {
   intro.from(el.querySelectorAll('.win, .bldg .name, .chart-hero .baseline'), { opacity: 0, duration: 0.8 }, 1.1);
   intro.from(el.querySelector('.cue'), { opacity: 0, duration: 0.8 }, 1.6);
 
-  // Viceroy's claim, scrubbed: the token leaves MPW as a loan and returns as rent, twice, then fades.
+  // Viceroy's claim, scrubbed: the token leaves MPW as a loan and returns as rent, twice, and rests at MPW.
   token.removeAttribute('transform');
   gsap.set(token, { opacity: 0 });
   gsap.set(flows, { opacity: 0 });
@@ -91,9 +93,7 @@ function heroMotion(sc) {
     .to(token, leg('#hero-back'), 1.1)
     .to(labels[1], { opacity: 1, duration: 0.3 }, 1.3)
     .to(token, leg('#hero-out'), 2.1)
-    .to(token, leg('#hero-back'), 3.1)
-    .to(token, { opacity: 0, duration: 0.4 }, 4.1)
-    .to(flows, { opacity: 0.3, duration: 0.4 }, 4.1);
+    .to(token, leg('#hero-back'), 3.1);
 }
 
 export function initMotion({ scenes, reduced }) {

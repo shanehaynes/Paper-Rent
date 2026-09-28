@@ -332,6 +332,18 @@
     0.242,
     0.192,
     null
+   ],
+   "Investment in loans receivable (CFS)": [
+    58.9,
+    207.5,
+    250.2,
+    420.3
+   ],
+   "Principal received on loans receivable (CFS)": [
+    1595.7,
+    53.3,
+    501.6,
+    214.4
    ]
   },
   "OHI": {
@@ -599,7 +611,9 @@
   "OHI|Real estate loans interest income": "FY2024 10-K consolidated statements of operations (FY2022-FY2024). FY2021 not collected: it falls outside the three years presented in that filing.",
   "OHI|Non-real estate loans interest income": "FY2024 10-K consolidated statements of operations (FY2022-FY2024). FY2021 not collected: it falls outside the three years presented in that filing.",
   "OHI|Miscellaneous income": "FY2024 10-K consolidated statements of operations (FY2022-FY2024). FY2021 not collected: it falls outside the three years presented in that filing.",
-  "MPW|Largest tenant share of total assets (Steward)": "Share of total assets per the 10-K concentration disclosures (FY2021-FY2023). No FY2024 figure in the data set."
+  "MPW|Largest tenant share of total assets (Steward)": "Share of total assets per the 10-K concentration disclosures (FY2021-FY2023). No FY2024 figure in the data set.",
+  "MPW|Investment in loans receivable (CFS)": "Consolidated statements of cash flows, investing activities, 'Investment in loans receivable': FY2021 from the FY2022 10-K (58,932), FY2022-FY2024 from the FY2024 10-K (207,542 / 250,223 / 420,324), $ thousands. Cash advanced on loans to all borrowers, not only rent-paying tenants.",
+  "MPW|Principal received on loans receivable (CFS)": "Consolidated statements of cash flows, investing activities, 'Principal received on loans receivable' (FY2024 10-K label: 'Principal received from sale and repayment of loans receivable'): FY2021 from the FY2022 10-K (1,595,708), FY2022-FY2024 from the FY2024 10-K (53,322 / 501,630 / 214,416), $ thousands."
  },
  "story_facts": {
   "MPW_steward_share_of_assets": {
@@ -657,7 +671,7 @@
    "OHI": {
     "facilities": 1026,
     "operators": 87,
-    "mix": "588 SNFs · 290 ALFs · 19 ILFs · 18 specialty · 1 MOB (+ mortgages on 97)",
+    "mix": "588 skilled nursing · 290 assisted living · 19 independent living · 18 specialty · 1 medical office building (+ mortgages on 97)",
     "largest": "CommuniCare 11.8%"
    },
    "SBRA": {
@@ -749,6 +763,23 @@
    "straight_line": 15.6,
    "total": 17.1
   },
-  "concentration_disclosure_threshold": 0.1
+  "concentration_disclosure_threshold": 0.1,
+  "MPW_viceroy_report_date": "2023-01-26",
+  "MPW_steward_first_shortfall_date": "2023-09",
+  "MPW_steward_lease_start_year": 2016,
+  "MPW_steward_payments_since_lease_start": 2000,
+  "MPW_wachtell_review": {
+   "engaged_by": "the Audit Committee of MPW’s board",
+   "completed": "2023-02",
+   "released": "2024-10-14"
+  },
+  "sources": {
+   "MPW_viceroy_report_date": "Viceroy Research, 'Medical Properties (dis)Trust', January 26, 2023 (same date as the timeline entry).",
+   "MPW_steward_first_shortfall_date": "MPW FY2023 10-K, Note 3: 'Steward delayed paying a portion of its September 2023 rent and paid only $16 million of its required $70 million of rent and interest obligations ... for the 2023 fourth quarter.'",
+   "MPW_steward_payments_since_lease_start": "MPW FY2023 10-K, Note 3: 'Our initial lease transaction with Steward began in 2016, and they have made approximately $2 billion in rent and interest payments since that time.' Approximate figure.",
+   "MPW_wachtell_review": "MPW press release, October 14, 2024, 'Medical Properties Trust Releases Findings of Independent Investigation Into Short-seller Allegations': the Board's Audit Committee engaged Wachtell, Lipton, Rosen & Katz; investigation completed February 2023; no evidence of round-tripping. 'Independent' is MPW's description.",
+   "MPW_steward_share_first_disclosed_in": "FY2021, FY2022 and FY2023 10-Ks state only that Steward, Circle and Prospect 'individually represented more than 10% of our total revenues'. The FY2024 10-K concentration table gives Steward FY2022 revenue of $427,912 thousand (27.7%).",
+   "OHI_profile_mix": "OHI FY2024 10-K facility counts; facility-type abbreviations (SNF, ALF, ILF, MOB) spelled out."
+  }
  }
 }

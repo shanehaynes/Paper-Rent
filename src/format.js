@@ -56,3 +56,12 @@ export function count(v) {
 }
 
 export const arrow = (parts) => parts.join(' → ');
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export function showDate(str) {
+  const q = /^(\d{4})-Q(\d)$/.exec(str);
+  if (q) return `Q${q[2]} ${q[1]}`;
+  if (/^\d{4}$/.test(str)) return str;
+  const [yy, mm, dd] = str.split('-').map(Number);
+  return dd ? `${MONTHS[mm - 1]} ${dd}, ${yy}` : `${MONTHS[mm - 1]} ${yy}`;
+}

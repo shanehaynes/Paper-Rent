@@ -1,16 +1,21 @@
-// Build-time number check. Renders dist/paper-rent.html, extracts every $…, …% and …× token
-// (text, tooltips, chart labels, screen-reader tables, appendix) and asserts each one derives
-// from paper_rent_data.json through the formatter. Any orphan fails the build.
-// Exempt: years and footnote indices (neither carries $, % or ×).
+// Build-time number check. Renders dist/paper-rent.html and fails the build unless:
+// 1. every $…, …% and …× token (text, tooltips, chart labels, screen-reader tables, appendix) is a
+//    JSON or derived value through the formatter WITH ITS SIGN. A magnitude of a negative value is
+//    accepted only for the values listed in shownAsMagnitude();
+// 2. a token quoted from a JSON string sits in text that contains that whole string;
+// 3. every figure with a known position (DuPont grid, accruals chart, warning tiles, appendix input
+//    and ratio tables, named spot checks) equals the value expected there, computed here from the JSON.
+// Exempt from 1: years and footnote indices (neither carries $, % or ×).
 import { chromium } from 'playwright';
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { allDerived, J } from '../src/derive.js';
-import { usd, pct, mult } from '../src/format.js';
+import { allDerived, shownAsMagnitude, J } from '../src/derive.js';
+import { usd, pct, mult, num } from '../src/format.js';
 
 const MINUS = '−';
-const norm = (s) => s.replace(/[-–−]/g, MINUS).replace(/^\+/, '').replace(/,/g, '');
+// A leading hyphen is read as a minus sign; nothing else is altered, so signs are compared exactly.
+const norm = (s) => s.replace(/^-/, MINUS).replace(/,/g, '');
 
 // ---- candidate set: every numeric leaf in the JSON plus every derived value, through every formatter variant
 const values = [];
@@ -24,13 +29,15 @@ values.push(...allDerived());
 
 const allowed = new Map();
 const allow = (token, v) => { const k = norm(token); if (!allowed.has(k)) allowed.set(k, v); };
+const magnitudes = shownAsMagnitude();
 for (const v of values) {
-  for (const x of [v, Math.abs(v)]) {
-    for (const decimals of [0, 1]) { allow(usd(x, { decimals }), v); allow(pct(x, { decimals }), v); }
-    allow(mult(x), v);
+  for (const x of magnitudes.includes(v) ? [v, Math.abs(v)] : [v]) {
+    for (const decimals of [0, 1]) {
+      for (const plus of [false, true]) { allow(usd(x, { decimals, plus }), v); allow(pct(x, { decimals, plus }), v); }
+    }
+    for (const decimals of [2, 3]) allow(mult(x, { decimals }), v);
   }
 }
-const jsonText = norm(strings.join('\n'));
 
 // ---- tokens on the rendered page
 const file = resolve('dist/paper-rent.html');
@@ -49,6 +56,27 @@ const texts = await page.evaluate(() => {
     for (const a of ['data-tip', 'aria-label', 'title']) if (el.hasAttribute(a)) out.push(el.getAttribute(a));
   }
   return out;
+});
+
+// ---- figures with a known position
+const at = await page.evaluate(() => {
+  const txt = (el) => (el ? [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim() : null);
+  const rows = (table) => [...table.querySelectorAll('tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent.trim()));
+  return {
+    dupont: [...document.querySelectorAll('#ch3 .cell')].flatMap((cell) =>
+      [...cell.querySelectorAll('[data-k]')].map((el) => ({ co: cell.dataset.co, year: cell.dataset.year, k: el.dataset.k, text: txt(el) }))),
+    accruals: rows(document.querySelector('#ch4 .acc-a table.sr-only')),
+    tiles: [...document.querySelectorAll('#ch5 .tile')].map((tile) => ({
+      title: tile.querySelector('h3').textContent,
+      rows: [...tile.querySelectorAll('.row')].map((r) => [r.querySelector('.co').textContent, r.querySelector('.latest').textContent.trim()]),
+    })),
+    inputs: rows(document.querySelector('#ap-inputs table')),
+    ratios: rows(document.querySelector('#ap-ratios table')),
+    spots: Object.fromEntries(Object.entries({
+      callout: '#ch2 .callout', point3: '#ch3 .points li:nth-child(3)', chips: '#ch4 .chips', sl: '#ch5 .tile .footnote',
+      signal1: '#ch6 .signal', against: '#ch6 .against .fact',
+    }).map(([k, sel]) => [k, [...document.querySelectorAll(sel)].map((e) => e.textContent).join(' | ')])),
+  };
 });
 await browser.close();
 
@@ -72,12 +100,71 @@ for (const text of texts) {
         count += 1;
         const k = norm(tok);
         if (allowed.has(k)) continue;
-        if (jsonText.includes(k)) continue; // quoted verbatim from a JSON string (notes, timeline, profiles)
+        // quoted from a JSON string (notes, timeline, profiles): the whole string must be in this text
+        if (strings.some((str) => str.includes(tok) && text.includes(str))) continue;
         orphans.set(tok, text.trim().slice(0, 90));
       }
     }
   }
 }
+
+// ---- expected value at each known position, computed from the JSON alone
+const Y = J.years;
+const COS = ['MPW', 'OHI', 'SBRA'];
+const PRE = Y.slice(0, 3);
+const D = (co, item, y) => J.data[co][item][Y.indexOf(Number(y))];
+const S = (co, item, y) => J.supplementary[co][item][Y.indexOf(Number(y))];
+const R = (co, name, y) => J.ratios[co][String(y)]?.[name] ?? null;
+const misplaced = [];
+const expect = (where, got, want) => { if (got !== want) misplaced.push(`${where}: shows "${got}", expected "${want}"`); };
+const has = (where, text, want) => { if (!text.includes(want)) misplaced.push(`${where}: expected "${want}" in "${text.slice(0, 90)}"`); };
+
+const DUPONT = {
+  roe: (co, y) => pct(R(co, 'ROE', y)), margin: (co, y) => pct(R(co, 'Net margin', y)),
+  turnover: (co, y) => mult(R(co, 'Asset turnover', y), { decimals: 3 }), leverage: (co, y) => mult(R(co, 'Leverage', y)),
+};
+if (at.dupont.length !== COS.length * 3 * 4) misplaced.push(`DuPont grid: ${at.dupont.length} figures found`);
+for (const c of at.dupont) expect(`DuPont ${c.co} FY${c.year} ${c.k}`, c.text, DUPONT[c.k](c.co, c.year));
+
+const GAIN = S('MPW', 'Gain on sale of real estate', 2022);
+const exGain = R('MPW', 'Accruals', 2022) - GAIN;
+COS.forEach((co, i) => PRE.forEach((y, k) =>
+  expect(`accruals chart ${co} FY${y}`, at.accruals[i]?.[k + 1], usd(R(co, 'Accruals', y), { decimals: 1, plus: true }))));
+expect('accruals chart ex-gain marker', at.accruals[3]?.[2], `${usd(exGain, { decimals: 1, plus: true })} ex-gain`);
+
+const slBefore = (D('MPW', 'Straight-line rent receivable (balance)', 2023) +
+  J.story_facts.MPW_steward_charges_2023['Reserve of straight-line rent receivables']) /
+  (D('MPW', 'Total revenue', 2023) + J.story_facts.MPW_2023_revenue_reserves);
+const TILES = ['SL rec / revenue', 'ACL / gross loans', 'Largest tenant / revenue', 'Debt / assets'];
+TILES.forEach((name, i) => COS.forEach((co, k) => {
+  const want = i === 0 && co === 'MPW' ? slBefore : i === 2 && co === 'MPW' ? null : R(co, name, 2023);
+  expect(`tile "${name}" ${co}`, at.tiles[i]?.rows[k]?.[1], pct(want));
+}));
+
+const ITEMS = Object.keys(J.data.MPW);
+const COLS = COS.flatMap((co) => Y.map((y) => [co, y]));
+ITEMS.forEach((item, i) => COLS.forEach(([co, y], k) =>
+  expect(`appendix inputs ${co} FY${y} ${item}`, at.inputs[i]?.[k + 1], num(D(co, item, y)))));
+
+const plusPct = (v) => pct(v, { plus: true });
+const RATIOS = {
+  ROE: pct, 'Net margin': pct, 'Asset turnover': (v) => mult(v, { decimals: 3 }), Leverage: mult, 'CFO/NI': mult,
+  Accruals: (v) => num(v, { plus: true }), 'Revenue growth': plusPct, 'CFO growth': plusPct,
+  'SL rec / revenue': pct, 'ACL / gross loans': pct, 'Largest tenant / revenue': pct, 'Debt / assets': pct,
+};
+Object.entries(RATIOS).forEach(([name, fmt], i) => COLS.forEach(([co, y], k) => {
+  const v = J.ratios[co][String(y)][name];
+  expect(`appendix ratios ${co} FY${y} ${name}`, at.ratios[i]?.[k + 1], v === undefined ? '–' : fmt(v));
+}));
+
+const cfoLessLoans = (y) => D('MPW', 'Cash flow from operations (CFO)', y) - S('MPW', 'Investment in loans receivable (CFS)', y);
+has('Ch2 callout', at.spots.callout, pct(J.story_facts.SBRA_resident_fee_share_2024));
+has('Ch3 point 3', at.spots.point3, usd(D('SBRA', 'Impairment charges (real estate and other)', 2022), { decimals: 1 }));
+has('Ch4 gain chip', at.spots.chips, `Gain on property sales ${usd(GAIN, { decimals: 1 })}`);
+has('Ch4 loan test', at.spots.chips, PRE.map((y) => usd(cfoLessLoans(y))).join(' → '));
+has('Ch5 straight-line footnote', at.spots.sl, pct(slBefore));
+has('Ch6 signal 1', at.spots.signal1, pct(R('MPW', 'CFO growth', 2022)));
+has('Ch6 against', at.spots.against, usd(J.story_facts.MPW_steward_payments_since_lease_start));
 
 // ---- no figures typed into source
 const typed = [];
@@ -91,10 +178,14 @@ for (const f of ['index.html', ...(await readdir('src')).filter((n) => n !== 'fo
 }
 
 console.log(`verify-numbers: ${count} tokens checked against ${allowed.size} formatted candidates from ${values.length} values.`);
-if (orphans.size || typed.length) {
+const placed = at.dupont.length + COS.length * PRE.length + 1 + TILES.length * COS.length +
+  (ITEMS.length + Object.keys(RATIOS).length) * COLS.length + 7;
+console.log(`verify-numbers: ${placed} positioned figures checked against their expected values.`);
+if (orphans.size || typed.length || misplaced.length) {
   for (const [tok, ctx] of orphans) console.error(`  ORPHAN ${tok}   in "${ctx}"`);
   for (const t of typed) console.error(`  TYPED FIGURE ${t}`);
-  console.error(`verify-numbers FAILED: ${orphans.size} orphan token(s), ${typed.length} typed figure(s).`);
+  for (const m of misplaced) console.error(`  MISPLACED ${m}`);
+  console.error(`verify-numbers FAILED: ${orphans.size} orphan token(s), ${typed.length} typed figure(s), ${misplaced.length} misplaced figure(s).`);
   process.exit(1);
 }
-console.log('verify-numbers passed: every $, % and × on the page traces to paper_rent_data.json.');
+console.log('verify-numbers passed: every $, % and × on the page traces to paper_rent_data.json with its sign, and every positioned figure is the expected one.');

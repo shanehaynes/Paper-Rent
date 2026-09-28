@@ -37,7 +37,7 @@ export function frame({ w, h: ht, title, desc, table, cls = '' }) {
   const id = `chart-${++uid}`;
   const svg = s('svg', {
     viewBox: `0 0 ${w} ${ht}`, role: 'img', 'aria-labelledby': `${id}-t ${id}-d`,
-    class: `chart ${cls}`, style: `width:${w / REM}rem;height:${ht / REM}rem`,
+    class: `chart ${cls}`, style: `--w:${w};width:${w / REM}rem;height:${ht / REM}rem`,
   }, s('title', { id: `${id}-t` }, title), s('desc', { id: `${id}-d` }, desc));
   const fig = h('figure', { class: 'fig' }, svg, table ? srTable({ caption: title, ...table }) : null);
   return { fig, svg };

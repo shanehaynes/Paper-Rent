@@ -8,12 +8,14 @@ gsap.registerPlugin(ScrollToPlugin);
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
-export function createDeck(scenes, { reduced, onChange }) {
-  const states = scenes.flatMap((sc, si) => Array.from({ length: sc.beats }, (_, beat) => ({ si, beat })));
+// In narrow mode the page is a plain document: one resting state per scene, every beat visible.
+export function createDeck(scenes, { reduced, narrow, onChange }) {
+  const states = scenes.flatMap((sc, si) => Array.from({ length: narrow ? 1 : sc.beats }, (_, beat) => ({ si, beat })));
   const gated = scenes.map((sc) => [...sc.el.querySelectorAll('[data-show]')].map((el) => {
     const [a, b] = el.dataset.show.split('-').map(Number);
     return { el, a, b };
   }));
+  const tips = scenes.map((sc) => [...sc.el.querySelectorAll('.has-tip')]);
   const beatOf = scenes.map(() => -1);
   let index = 0;
   let tween = null;
@@ -31,15 +33,20 @@ export function createDeck(scenes, { reduced, onChange }) {
   function update() {
     const y = window.scrollY;
     scenes.forEach((sc, si) => {
-      const beat = clamp(Math.round((y - sc.el.offsetTop) / vh()), 0, sc.beats - 1);
+      const beat = narrow ? 0 : clamp(Math.round((y - sc.el.offsetTop) / vh()), 0, sc.beats - 1);
       if (beat === beatOf[si]) return;
       beatOf[si] = beat;
       sc.el.dataset.beat = beat;
-      for (const g of gated[si]) g.el.classList.toggle('is-on', beat >= g.a && beat <= g.b);
+      for (const g of gated[si]) g.el.classList.toggle('is-on', narrow || (beat >= g.a && beat <= g.b));
       sc.onBeat?.(beat);
     });
-    if (!tween) index = nearest();
-    onChange?.(states[nearest()], nearest());
+    const at = nearest();
+    if (!tween) index = at;
+    // Only tooltips in the beat on screen take keyboard focus.
+    tips.forEach((list, si) => list.forEach((tip) => {
+      tip.tabIndex = narrow || (si === states[at].si && !tip.closest('[data-show]:not(.is-on)')) ? 0 : -1;
+    }));
+    onChange?.(states[at], at);
   }
 
   function go(i, { instant = false } = {}) {
@@ -59,7 +66,7 @@ export function createDeck(scenes, { reduced, onChange }) {
   }
 
   window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', () => go(index, { instant: true }));
+  if (!narrow) window.addEventListener('resize', () => go(index, { instant: true }));
 
   return {
     states,

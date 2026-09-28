@@ -4,22 +4,24 @@ CHAPTER 0 · HERO
 ==============================================================================
 MGT 402 · Peer Case 1
 Paper Rent
-Was Medical Properties Trust paying its own rent — and would the financial statements have told you?
+Was Medical Properties Trust (MPW) paying its own rent — and would the financial statements have told you?
 [visual] buildings: MPW, OHI, SBRA; token labels: loan / rent
 Scroll ↓ or press →
+[beat 2 caption] The allegation (Viceroy Research, Jan 26, 2023): MPW lends to its tenant, and the money comes back as rent.
 
 ==============================================================================
 CHAPTER 1 · THE ISSUE
 ==============================================================================
 When does recognized rent stop being income?
 A landlord books rent evenly over a lease (straight-line) and can lend money to the tenants who pay it. Both let reported earnings run ahead of cash. The question is whether MPW’s did — and whether it recognized in time that its tenants couldn’t pay.
+On Jan 26, 2023, short-seller Viceroy Research alleged that MPW was lending tenants the money to pay its rent.
 
   Income statement: Straight-line rent revenue; Reserves booked as negative revenue
-  Balance sheet: Straight-line rent receivable; Loans to tenants; Allowance for credit losses
-  Cash flow statement: Net income vs. cash from operations; The “straight-line rent” add-back
-  Footnotes: Tenant concentration; Cash-basis elections; Write-offs
+  Balance sheet: Straight-line rent receivable; Loans to tenants; Allowance for credit losses (ACL)
+  Cash flow statement: Net income vs. cash flow from operations (CFO); The “straight-line rent” add-back
+  Footnotes: Tenant concentration; Moves to cash basis; Write-offs
 
-  [explainer] Contractual cash rent / Straight-line revenue / Receivable / Yr
+  [explainer] Contractual cash rent / Straight-line revenue / Receivable / Yr / Illustrative lease
   Revenue now, cash later. The receivable is a bet that the tenant lasts.
 
 ==============================================================================
@@ -31,9 +33,10 @@ Same industry. Very different bets.
     393 properties · 52 tenants
     173 acute-care hospitals · 69 behavioral · 130 post-acute · 21 freestanding ER/urgent care
     Largest tenants: Circle 20.7% · Priory 10.2%
+    Steward was the largest in FY2022: 27.7% of revenue, 24.2% of assets. It filed for bankruptcy in 2024.
   OHI · Omega Healthcare Investors
     1,026 facilities · 87 operators
-    588 SNFs · 290 ALFs · 19 ILFs · 18 specialty · 1 MOB (+ mortgages on 97)
+    588 skilled nursing · 290 assisted living · 19 independent living · 18 specialty · 1 medical office building (+ mortgages on 97)
     Largest tenant: CommuniCare 11.8%
   SBRA · Sabra Health Care REIT
     364 properties · 14 loans · 5 preferred equity investments
@@ -45,52 +48,57 @@ Same industry. Very different bets.
     OHI: Rental income 84.4% | Real-estate loan interest 12.1% | Non-RE loan interest 2.9% | Miscellaneous 0.6%
     SBRA: Rental 54.2% | Resident fees & services 40.5% | Interest 5.3%
 
-[callout] 40.5% of Sabra’s FY2024 revenue is operating income from senior housing it runs, not rent. Every cross-company ratio below uses Sabra’s rent + interest revenue only.
-MPW: few, large, financially fragile hospital operators. OHI: many nursing-home operators. Sabra: diversified, part-landlord, part-operator.
+[footnote] Only MPW reports straight-line rent as its own revenue line. OHI’s sits inside rental income ($43M of non-cash straight-line rent and effective interest in FY2024, per its cash flow statement); SBRA’s sits inside rental revenue.
+[callout] 40.5% of SBRA’s FY2024 revenue is resident-fee revenue from its managed senior housing, not rent. The ratios that follow use total revenue for all three companies.
+MPW: few, large, financially fragile hospital operators. OHI: many nursing-home operators. SBRA: diversified, part-landlord, part-operator.
 
 ==============================================================================
 CHAPTER 3 · WHO PERFORMED BETTER?
 ==============================================================================
-Omega earned more, more steadily, with cash to show for it.
+OHI earned more, more steadily, with cash to show for it.
 ROE = margin × turnover × leverage
 
-  MPW FY2022: ROE 10.6% = 58.5% × 0.08× × 2.36×
-  MPW FY2023: ROE −6.9% = −63.8% × 0.05× × 2.34×
-  MPW FY2024: ROE −38.7% = −242.1% × 0.06× × 2.61×
-  OHI FY2022: ROE 10.8% = 48.6% × 0.09× × 2.41×
-  OHI FY2023: ROE 6.4% = 25.5% × 0.10× × 2.45×
-  OHI FY2024: ROE 9.6% = 38.6% × 0.11× × 2.24×
-  SBRA FY2022: ROE −2.4% = −17.7% × 0.07× × 1.82×
-  SBRA FY2023: ROE 0.5% = 3.4% × 0.07× × 1.90×
-  SBRA FY2024: ROE 4.6% = 30.3% × 0.08× × 1.93×
+  MPW FY2022: ROE 10.6% = 58.5% × 0.077× × 2.36×
+  MPW FY2023: ROE −6.9% = −63.8% × 0.046× × 2.34×
+  MPW FY2024: ROE −38.7% = −242.1% × 0.061× × 2.61×
+  OHI FY2022: ROE 10.8% = 48.6% × 0.092× × 2.41×
+  OHI FY2023: ROE 6.4% = 25.5% × 0.103× × 2.45×
+  OHI FY2024: ROE 9.6% = 38.6% × 0.111× × 2.24×
+  SBRA FY2022: ROE −2.4% = −12.4% × 0.107× × 1.82×
+  SBRA FY2023: ROE 0.5% = 2.1% × 0.116× × 1.90×
+  SBRA FY2024: ROE 4.6% = 18.0% × 0.132× × 1.93×
 
 1. OHI ROE 10.8% → 6.4% → 9.6%; positive every year, CFO above net income every year.
 2. MPW ROE collapses 10.6% → −6.9% → −38.7% as Steward unwinds; CFO falls three years running ($812M → $246M).
-3. Sabra’s losses (FY21–22) are JV impairments, not tenant failure; it has the lowest leverage (1.82×–1.93×) and is improving.
+3. SBRA’s losses (FY2021–22) are mostly joint-venture (JV) impairments; FY2022 also reflects real-estate impairments ($94.0M) and a tenant write-off ($17.1M). Lowest leverage (1.82×–1.93×), improving.
 Verdict: OHI > SBRA > MPW
-Footnote: Average-balance ratios; total equity incl. noncontrolling interests (OHI parent-only equity is ~5% lower).
+Footnote: Average-balance ratios on total revenue (SBRA’s includes resident fees). Total equity incl. noncontrolling interests (OHI parent-only equity is ~5% lower).
 
 ==============================================================================
 CHAPTER 4 · EARNINGS VS. CASH
 ==============================================================================
 [badge] Pre-event window: FY2021–FY2023 · Outcome window: FY2024
-A landlord’s accruals should be negative. MPW’s weren’t.
-Depreciation is a large non-cash expense, so a healthy landlord’s net income sits below its operating cash flow.
+In FY2022, MPW’s earnings rose while its cash fell.
+Depreciation is a large non-cash expense, so a landlord’s net income normally sits below its cash flow from operations (CFO): accruals (net income − CFO) are normally negative.
 
 [beat 1] Total accruals (net income − CFO)
-  MPW: FY2021 −$155.7M | FY2022 +$163.6M | FY2023 −$1.06B | FY2024 −$2.66B
-  OHI: FY2021 −$305.4M | FY2022 −$198.8M | FY2023 −$375.5M | FY2024 −$343.1M
-  SBRA: FY2021 −$469.7M | FY2022 −$393.3M | FY2023 −$286.8M | FY2024 −$183.8M
-  labels: Below zero is normal · Only positive bar: MPW FY2022 +$163.6M · reserves & impairments
-[beat 2] MPW: net income vs. cash from operations
-  Net income: FY2021 $656M | FY2022 $903M | FY2023 −$557M | FY2024 −$2.41B
-  CFO: FY2021 $812M | FY2022 $739M | FY2023 $506M | FY2024 $246M
+  MPW: FY2021 −$155.7M | FY2022 +$163.6M | FY2023 −$1.06B
+  OHI: FY2021 −$305.4M | FY2022 −$198.8M | FY2023 −$375.5M
+  SBRA: FY2021 −$469.7M | FY2022 −$393.3M | FY2023 −$286.8M
+  marker: MPW FY2022 −$373.2M ex-gain
+  labels: Below zero is normal · MPW FY2022 turned positive (+$163.6M) only through a $536.8M gain on property sales, mainly the Macquarie sale; −$373.2M without it · reserves & impairments
+[beat 2] MPW: net income vs. CFO
+  Net income: FY2021 $656M | FY2022 $903M | FY2023 −$557M
+  CFO: FY2021 $812M | FY2022 $739M | FY2023 $506M
   In FY2022, net income rises (+37.6%) while CFO falls (−9.0%).
 [beat 3] What explains the gap · MPW FY2022
-  Straight-line rent accrued $282.5M
   Gain on property sales $536.8M
+  Straight-line rent and other non-cash revenue $282.5M
   Offset: impairments $268.4M
-  Sabra FY2021–22 and MPW FY2023–24: large negative accruals from impairments and write-offs. The cash was fine; the assets were marked down.
+  SBRA FY2021–22: large negative accruals from impairments and write-offs while CFO held at $356M → $316M. The cash was fine; the assets were marked down. MPW FY2023–24 is different: its cash fell too.
+[beat 4] What this test cannot see
+  Rent paid out of the landlord’s own loan still counts in CFO; the loan sits in investing. Accruals cannot detect round-tripping.
+  Harshest case, CFO less every new loan advanced: $753M → $532M → $256M (reported $812M → $739M → $506M).
 
 ==============================================================================
 CHAPTER 5 · THE WARNING LIGHTS
@@ -98,27 +106,28 @@ CHAPTER 5 · THE WARNING LIGHTS
 [badge] Pre-event window FY2021–FY2023
 The signals were in the filings before Steward failed.
 
-[beat 1] gauges
+[beats 1-2] gauges, two per beat
   1. Straight-line receivable ÷ revenue
-      MPW: FY2021 47.2% | FY2022 51.0% | FY2023 47.8% → big number 47.8%
+      MPW: FY2021 47.2% | FY2022 51.0% | FY2023 64.6% → big number 64.6%
       OHI: FY2021 14.0% | FY2022 18.9% | FY2023 21.3% → big number 21.3%
       SBRA: FY2021 n/d | FY2022 n/d | FY2023 n/d → big number n/d
-      MPW 47–51% vs OHI 14–21% (SBRA n/d)
-      Caption: MPW carried about half a year of revenue as rent not yet billed.
-      Footnote: MPW FY2023 is shown on revenue before the $459M of reserves booked as negative revenue (47.8%); the raw 73.0% is distorted by them.
+      MPW 47–65% vs OHI 14–21% (SBRA n/d)
+      Caption: MPW carried half a year or more of revenue as rent not yet billed.
+      Footnote: MPW FY2023 is shown before reserves on both sides (64.6%): $224M of straight-line reserves added back to the receivable, $459M of reserves added back to revenue. The raw 73.0% is distorted by them.
       n/d tooltip (SBRA): Not disclosed as a standalone balance (inside 'accounts receivable, prepaid expenses and other assets').
-  2. Allowance ÷ gross loans to tenants
+  2. Allowance for credit losses (ACL) ÷ gross loans
       MPW: FY2021 4.3% | FY2022 7.3% | FY2023 6.6% → big number 6.6%
       OHI: FY2021 10.0% | FY2022 12.9% | FY2023 13.0% → big number 13.0%
       SBRA: FY2021 1.8% | FY2022 1.8% | FY2023 1.8% → big number 1.8%
       MPW 4.3% → 7.3% → 6.6%, OHI 10.0% → 12.9% → 13.0%, SBRA 1.8%
-      Caption: MPW reserved roughly half of what Omega did against loans to riskier tenants, while lending Steward a further $150M in 2022.
+      Caption: Like for like (loans + financing leases), MPW reserved 1.5% → 3.6% → 3.6% against OHI’s 10.0% → 12.9% → 13.0%, while lending Steward a further $150M in 2022.
+      Footnote: MPW’s allowance also covers financing leases, but the ratio plotted divides it by loans only, so the plotted MPW line is overstated.
   3. Largest tenant ÷ revenue
       MPW: FY2021 n/d | FY2022 n/d | FY2023 n/d → big number n/d
       OHI: FY2021 9.5% | FY2022 11.1% | FY2023 11.5% → big number 11.5%
       SBRA: FY2021 n/d | FY2022 n/d | FY2023 n/d → big number n/d
       MPW n/d; OHI 9.5% → 11.1% → 11.5%; SBRA <10%, n/d
-      Caption: Steward 25.1% → 24.2% → 19.2% of assets. The revenue share for FY2022 (27.7%) first appeared in the FY2024 10-K.
+      Caption: Steward 25.1% → 24.2% → 19.2% of assets. MPW’s FY2021–23 10-Ks said only that Steward was more than 10% of revenue; the FY2022 share (27.7%) first appeared in the FY2024 10-K.
       n/d tooltip (MPW): Steward. MPW did NOT disclose a dollar or % figure in the FY2021-FY2023 10-Ks (only '>10% of revenue' and share of total assets: 25.1% / 24.2% / 19.2%). FY2022 figure ($427.9M, 27.7%) first disclosed in FY2024 10-K. FY2024 largest = Circle ($205.6M, 20.7%).
       n/d tooltip (SBRA): Not disclosed: 'no tenant relationship represented 10% or more of total revenues' in every year.
   4. Debt ÷ assets
@@ -127,13 +136,15 @@ The signals were in the filings before Steward failed.
       SBRA: FY2021 40.1% | FY2022 43.6% | FY2023 44.8% → big number 44.8%
       MPW 55.0% → 52.2% → 55.0%, OHI 54.5% → 56.2% → 55.6%, SBRA 40–45%
       Caption: Leverage did not set MPW apart — until FY2024.
-[beat 2] When did they admit it?
-  above · 2021 · OHI moves 6 operators to cash basis
-  above · 2022 · 9 more (36.5% of revenue)
+[beat 3] When did they admit it?
+  above · 2021 (year band) · OHI 6 operators moved to cash basis
+  above · 2022 (year band) · OHI 9 more (36.5% of revenue)
+  above · 2023 (year band) · OHI 1 more, and 1 in 2024
   below · 2022-12-31 · MPW moves Prospect to cash basis
+  below · 2023-01-26 · Viceroy report
   below · 2023-Q4 · Steward pays $16M of $70M due
   below · 2023-12-31 · MPW moves Steward to cash basis
-[beat 3] The FY2024 check   [badge] Outcome window FY2024
+[beat 4] The FY2024 check   [badge] Outcome window FY2024
   Steward charges FY2023: $714M
       Reserve of unpaid rent and lease incentives $154M
       Reserve of straight-line rent receivables $224M
@@ -148,7 +159,7 @@ The signals were in the filings before Steward failed.
       Equity investment and other $54M
   MPW allowance for credit losses: $96M → $512M (after $1.24B of provisions)
   FY2024 debt ÷ assets: 61.9%
-  The combination (heavy straight-line accruals, thin reserves, an undisclosed concentration, late cash-basis elections) was MPW’s alone.
+  The combination (heavy straight-line accruals, thin reserves, a concentration disclosed only as “more than 10% of revenue”, late moves to cash basis) was MPW’s alone.
 
 ==============================================================================
 CHAPTER 6 · THE VERDICT
@@ -156,13 +167,13 @@ CHAPTER 6 · THE VERDICT
 Overstated? Yes, in substance. Fabricated? No evidence.
 
   Signal 1 · Cash flows — Earnings outran cash.
-    Only company-year with positive accruals (FY2022). Non-cash straight-line rent was 21–26% on top of every dollar of rent billed (FY2021–22).
+    FY2022 net income +37.6%, CFO −9.0%; CFO then fell every year to FY2024. Non-cash straight-line rent was 21–26% on top of every dollar of rent billed (FY2021–22).
   Signal 2 · Balance sheet and footnotes — Losses were recognized late.
-    Allowance 4–7% of tenant loans vs Omega’s 10–13%; Steward’s revenue share undisclosed; cash-basis election only after default. Then $2.28B of Steward charges in FY2023–24.
+    Allowance 2–4% of the loans and financing leases it covered vs OHI’s 10–13% of loans; Steward’s revenue share given only as more than 10%; Steward moved to cash basis only after it stopped paying in full. Then $2.28B of Steward charges in FY2023–24.
   Paper rent, literally.
     In 2023, MPW recognized about $82M of revenue from Prospect, a tenant already on cash basis, paid in equity of Prospect’s own managed-care business, “in lieu of cash.”
   [Strongest fact against us]
-    An independent Wachtell Lipton review found no round-tripping, and Steward paid most billed rent in cash through mid-2023 (billed-rent receivables were only $167M at FY2022 year-end).
+    A Wachtell Lipton review, engaged by the Audit Committee of MPW’s board, found no evidence of round-tripping. The first Steward shortfall MPW disclosed was Sep 2023 rent, after about $2.00B of rent and interest paid since 2016.
     Response: This narrows our claim; it doesn’t reverse it. GAAP-compliant timing choices can still overstate economic performance. The issue is when losses were recognized, not whether revenue was invented.
 
 ==============================================================================
@@ -177,11 +188,19 @@ AI did the retrieval. We did the judgment.
   Bottlenecks
     • SEC blocks automated requests without a User-Agent; our cloud tool was blocked, so we went through a browser
     • XBRL misses company-specific tags (MPW’s straight-line receivable, tenant concentration) → back to footnotes
-    • Restated comparatives vs as-filed numbers; MPW’s Steward revenue share simply wasn’t disclosed before FY2024
+    • Restated comparatives vs as-filed numbers; MPW’s 10-Ks gave no Steward revenue figure before FY2024
   Learned
     • AI is fastest at finding, weakest at defining (what counts as a “loan to a tenant”?)
     • Every ratio needed a human definition decision
     • Absence of disclosure is itself a data point
+
+==============================================================================
+CHAPTER 8 · QUESTIONS
+==============================================================================
+Overstated in substance, not fabricated.
+Questions?
+Every input, ratio, definition and source is in the appendix.
+[button] Open the appendix (A)
 
 ==============================================================================
 APPENDIX
@@ -222,8 +241,8 @@ APPENDIX
     (Flow ratios FY2022–FY2024 on average balances; FY2021 point-in-time ratios only. Accruals in $M.)
      | MPW FY2021 | MPW FY2022 | MPW FY2023 | MPW FY2024 | OHI FY2021 | OHI FY2022 | OHI FY2023 | OHI FY2024 | SBRA FY2021 | SBRA FY2022 | SBRA FY2023 | SBRA FY2024
     ROE | – | 10.6% | −6.9% | −38.7% | – | 10.8% | 6.4% | 9.6% | – | −2.4% | 0.5% | 4.6%
-    Net margin | – | 58.5% | −63.8% | −242.1% | – | 48.6% | 25.5% | 38.6% | – | −17.7%* | 3.4%* | 30.3%*
-    Asset turnover | – | 0.08× | 0.05× | 0.06× | – | 0.09× | 0.10× | 0.11× | – | 0.07×* | 0.07×* | 0.08×*
+    Net margin | – | 58.5% | −63.8% | −242.1% | – | 48.6% | 25.5% | 38.6% | – | −12.4% | 2.1% | 18.0%
+    Asset turnover | – | 0.077× | 0.046× | 0.061× | – | 0.092× | 0.103× | 0.111× | – | 0.107× | 0.116× | 0.132×
     Leverage | – | 2.36× | 2.34× | 2.61× | – | 2.41× | 2.45× | 2.24× | – | 1.82× | 1.90× | 1.93×
     CFO/NI | – | 0.82× | −0.91× | −0.10× | – | 1.47× | 2.55× | 1.84× | – | −4.07× | 21.78× | 2.45×
     Accruals | −155.7 | +163.6 | −1,062.3 | −2,655.8 | −305.4 | −198.8 | −375.5 | −343.1 | −469.7 | −393.3 | −286.8 | −183.8
@@ -233,12 +252,12 @@ APPENDIX
     ACL / gross loans | 4.3% | 7.3% | 6.6% | 65.6% | 10.0% | 12.9% | 13.0% | 10.1% | 1.8% | 1.8% | 1.8% | 1.6%
     Largest tenant / revenue | n/d | 27.7% | n/d | 20.7% | 9.5% | 11.1% | 11.5% | 11.8% | n/d | n/d | n/d | n/d
     Debt / assets | 55.0% | 52.2% | 55.0% | 61.9% | 54.5% | 56.2% | 55.6% | 48.9% | 40.1% | 43.6% | 44.8% | 45.6%
-    Note: * Sabra net margin and asset turnover use comparable (rental + interest) revenue, as in Chapter 3. ROE and leverage are unaffected.
+    Note: SBRA net margin and asset turnover use total revenue, as in Chapter 3. On comparable (rental + interest) revenue*, net margin is −17.7% → 3.4% → 30.3% and asset turnover 0.075× → 0.074× → 0.078× (FY2022–24). * Excludes resident fees and services, so the net income in the numerator still includes senior-housing operations that the revenue in the denominator leaves out.
 
 4. Definitions and choices
     • Equity: total equity including noncontrolling interests.
     • Debt: carrying value (net), sum of all borrowings.
-    • Sabra comparable revenue: rental + interest, excluding resident fees ($414M → $438M → $411M → $419M).
+    • SBRA comparable revenue: rental + interest, excluding resident fees ($414M → $438M → $411M → $419M).
     • MPW “loans to tenants”: mortgage loans + other loans + loan-type investments in unconsolidated operating entities.
     • MPW’s allowance also covers financing leases. Supplementary ratio on loans + financing leases: 1.5% → 3.6% → 3.6% → 27.8%.
     • OHI largest-tenant revenue: implied from the disclosed percentage.
@@ -261,9 +280,18 @@ APPENDIX
     Loans to tenants | 1,089.9 | 1,543.5 | 1,364.7 | 267.8
     Investment in financing leases | 2,053.3 | 1,691.3 | 1,231.6 | 1,057.8
     Investments in unconsolidated operating entities | 1,289.4 | 1,444.9 | 1,778.6 | 439.6
-    Note: Billed receivables tripled in FY2022: $56M → $167M.
+    Note: Billed receivables, all tenants, tripled in FY2022: $56M → $167M. The balance is not broken out by tenant, so it says nothing about Steward alone.
 
-7. Steward charges
+7. MPW operating cash flow and loans advanced
+    ($M)
+     | FY2021 | FY2022 | FY2023 | FY2024
+    Cash flow from operations (CFO) | 811.7 | 739.0 | 505.8 | 245.5
+    Investment in loans receivable | 58.9 | 207.5 | 250.2 | 420.3
+    Principal received on loans receivable | 1,595.7 | 53.3 | 501.6 | 214.4
+    CFO less investment in loans receivable | 752.8 | 531.5 | 255.6 | −174.8
+    Note: Loans are to all borrowers, not only rent-paying tenants, and not every loan funded rent, so the last row is a floor on cash earnings, not an estimate. Principal received is left out: it swings with one-off repayments ($1.60B in FY2021).
+
+8. Steward charges
     FY2023
       Reserve of unpaid rent and lease incentives: $154M
       Reserve of straight-line rent receivables: $224M
@@ -279,7 +307,7 @@ APPENDIX
       Equity investment and other: $54M
       Total: $1.56B
 
-8. OHI cash-basis history
+9. OHI cash-basis history
     (Write-offs in $M)
      | FY2021 | FY2022 | FY2023 | FY2024
     Operators moved to cash basis | 6 | 9 | 1 | 1
@@ -287,14 +315,15 @@ APPENDIX
     Cash-basis operators’ share of revenue | 18.6% | 36.5% | 23.9% | 20.5%
     Straight-line / receivable write-offs | 37.3 | 123.0 | 20.6 | 4.2
 
-9. Sabra adjustments
+10. SBRA adjustments
     • Resident fees and services: $156M → $187M → $236M → $285M (excluded from comparable revenue).
     • Avamere write-off FY2021: $25.2M ($44.0M incl. above-market intangible).
     • North American write-off FY2022: $15.6M ($17.1M total).
     • Enlivant JV impairments: $164.1M (FY2021) and $57.8M (FY2022), inside the loss from unconsolidated JVs (−$192.1M → −$98.0M).
 
-10. Sources
-    • Viceroy Research, “Medical Properties (dis)Trust,” January 26, 2023.
+11. Sources
+    • Viceroy Research, “Medical Properties (dis)Trust,” Jan 26, 2023.
+    • MPW press release, “Medical Properties Trust Releases Findings of Independent Investigation Into Short-seller Allegations,” Oct 14, 2024.
     MPW FY2021 Form 10-K: https://www.sec.gov/Archives/edgar/data/1287865/000156459022008100/mpw-10k_20211231.htm
     MPW FY2022 Form 10-K: https://www.sec.gov/Archives/edgar/data/1287865/000095017023005575/mpw-20221231.htm
     MPW FY2023 Form 10-K: https://www.sec.gov/Archives/edgar/data/1287865/000095017024023248/mpw-20231231.htm

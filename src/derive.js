@@ -37,26 +37,34 @@ const avg = (co, item, y) => (d(co, item, y) + d(co, item, y - 1)) / 2;
 export const sbraComparableRevenue = (y) =>
   s('SBRA', 'Rental and related revenues', y) + s('SBRA', 'Interest and other income', y);
 
-export const revenueForRatios = (co, y) =>
-  co === 'SBRA' ? sbraComparableRevenue(y) : d(co, L.revenue, y);
-
 export const growth = (co, item, y) => d(co, item, y) / d(co, item, y - 1) - 1;
 
-// ROE = margin × turnover × leverage, average balances.
-// Sabra's margin and turnover use comparable revenue; ROE and leverage are unaffected.
+// ROE = margin × turnover × leverage, average balances, total revenue for every company.
 export function dupont(co, y) {
-  const rev = revenueForRatios(co, y);
   return {
     roe: r(co, 'ROE', y),
-    margin: d(co, L.ni, y) / rev,
-    turnover: rev / avg(co, L.assets, y),
+    margin: r(co, 'Net margin', y),
+    turnover: r(co, 'Asset turnover', y),
     leverage: r(co, 'Leverage', y),
   };
 }
 
-// MPW FY2023 straight-line receivable on revenue before reserves booked as negative revenue.
+// Sabra's margin and turnover on comparable (rental + interest) revenue. Appendix only.
+export function sbraComparableDupont(y) {
+  const rev = sbraComparableRevenue(y);
+  return { margin: d('SBRA', L.ni, y) / rev, turnover: rev / avg('SBRA', L.assets, y) };
+}
+
+export const accrualsExGain = (y) => r('MPW', 'Accruals', y) - s('MPW', 'Gain on sale of real estate', y);
+
+// CFO with every new loan advanced treated as if it came straight back as rent or interest.
+export const mpwCfoLessLoans = (y) => d('MPW', L.cfo, y) - s('MPW', 'Investment in loans receivable (CFS)', y);
+
+// MPW FY2023 straight-line receivable on revenue, both before reserves: the Steward straight-line
+// reserve is added back to the receivable and the reserves booked as negative revenue to revenue.
 export const mpwSlRecOnRevenueBeforeReserves = () =>
-  d('MPW', L.slRec, 2023) / (d('MPW', L.revenue, 2023) + F.MPW_2023_revenue_reserves);
+  (d('MPW', L.slRec, 2023) + F.MPW_steward_charges_2023['Reserve of straight-line rent receivables']) /
+  (d('MPW', L.revenue, 2023) + F.MPW_2023_revenue_reserves);
 
 export const mpwSlRecSeriesPreEvent = () => [
   r('MPW', 'SL rec / revenue', 2021),
@@ -110,16 +118,19 @@ export function revenueMix(co, y) {
   return parts.map((p) => ({ ...p, share: complete ? p.value / total : null }));
 }
 
+// Negative JSON values that the page shows as magnitudes. verify-numbers.mjs rejects any other sign change.
+export const shownAsMagnitude = () => [d('MPW', L.slAdj, 2022), d('OHI', L.slAdj, 2024)];
+
 export function allDerived() {
   const out = [];
   for (const y of YEARS) {
     out.push(sbraComparableRevenue(y), mpwSlOnRentBilled(y), mpwAltAcl(y), ohiParentEquityGap(y));
+    out.push(accrualsExGain(y), mpwCfoLessLoans(y));
+    if (y > YEARS[0]) out.push(sbraComparableDupont(y).margin, sbraComparableDupont(y).turnover);
     for (const co of COS) {
       for (const p of revenueMix(co, y)) if (p.share != null) out.push(p.share);
       if (y > YEARS[0]) {
         out.push(growth(co, L.ni, y), growth(co, L.cfo, y));
-        const dp = dupont(co, y);
-        out.push(dp.margin, dp.turnover);
       }
     }
   }

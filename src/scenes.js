@@ -2,10 +2,9 @@
 // Elements carry data-show="from-to" (beat range in which they are visible).
 
 import * as c from './content.js';
-import { YEARS } from './derive.js';
 import { h, nd } from './dom.js';
 import {
-  heroArt, stepChart, mixBar, dupontBars, divergingBars, niCfoLines, sparkline, timeline, waterfall,
+  heroArt, stepChart, mixBar, divergingBars, niCfoLines, sparkline, timeline, waterfall,
 } from './charts.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -41,7 +40,9 @@ function hero() {
       h('h1', { id: 'hero-h', class: 'title' }, x.title),
       h('p', { class: 'subtitle' }, x.subtitle),
       heroArt({ buildings: x.buildings, tokenLabels: x.tokenLabels, title: x.artTitle, desc: x.artDesc }),
-      h('p', { class: 'cue' }, x.cue),
+      h('div', { class: 'swap hero-foot' },
+        h('p', { class: 'cue', 'data-show': '0-0' }, x.cue),
+        h('p', { class: 'hero-caption', 'data-show': '1-1' }, x.caption)),
     ],
   });
   return sc;
@@ -55,6 +56,7 @@ function issue() {
     body: [
       h('div', { class: 'layer issue-a', 'data-show': '0-0' },
         h('p', { class: 'lede' }, x.body),
+        h('p', { class: 'lede allegation pop' }, x.allegation),
         h('div', { class: 'statements' }, x.statements.map((st) =>
           h('article', { class: 'card statement pop' },
             h('h3', {}, st.title),
@@ -76,17 +78,19 @@ function landlords() {
     body: [
       h('div', { class: 'layer cols3', 'data-show': '0-0' }, x.columns.map((col) =>
         h('article', { class: `profile c-${col.co} pop` },
-          h('h3', {}, col.name),
+          h('h3', {}, `${col.name} (${col.co})`),
           h('p', { class: 'big' }, col.big, h('span', {}, col.bigLabel)),
           h('p', { class: 'line strong' }, col.sub),
           h('p', { class: 'line' }, col.mix),
-          h('p', { class: 'line dim' }, col.largest)))),
+          h('p', { class: 'line dim' }, col.largest),
+          col.was && h('p', { class: 'line' }, col.was)))),
       h('div', { class: 'layer mix', 'data-show': '1-1' },
         h('h3', { class: 'section-title' }, x.mixTitle),
         Object.entries(x.mix).map(([co, parts]) =>
           h('div', { class: `mix-row c-${co}` },
-            h('p', { class: 'mix-name' }, c.SHORT[co]),
+            h('p', { class: 'mix-name' }, co),
             mixBar({ co, parts, title: `${c.NAMES[co]}: ${x.mixTitle}` }))),
+        h('p', { class: 'footnote pop' }, x.mixNote),
         h('p', { class: 'callout c-SBRA pop' }, x.callout),
         h('p', { class: 'takeaway pop' }, x.takeaway)),
     ],
@@ -108,9 +112,12 @@ function performance() {
           x.grid.map((row) => [
             h('p', { class: `rowhead c-${row.co}`, 'data-co': row.co }, row.co),
             row.cells.map((cell) =>
-              h('div', { class: `cell c-${row.co}`, 'data-co': row.co },
-                h('p', { class: `roe ${cell.roe < 0 ? 'neg' : ''}` }, cell.text.roe, h('span', {}, 'ROE')),
-                dupontBars({ co: row.co, cell }))),
+              h('div', { class: `cell c-${row.co}`, 'data-co': row.co, 'data-year': cell.year },
+                h('p', { class: `roe ${cell.roe < 0 ? 'neg' : ''}`, 'data-k': 'roe' }, cell.text.roe, h('span', {}, 'ROE')),
+                h('dl', { class: 'parts' }, ['margin', 'turnover', 'leverage'].map((k) =>
+                  h('div', {},
+                    h('dt', {}, k),
+                    h('dd', { class: cell[k] < 0 ? 'neg' : '', 'data-k': k }, cell.text[k])))))),
           ]))),
       h('div', { class: 'perf-side' },
         h('ol', { class: 'points' }, x.points.map((t, k) =>
@@ -129,21 +136,29 @@ function performance() {
 function accruals() {
   const x = c.accruals;
   return scene({
-    id: 'ch4', chapter: 4, beats: 3,
+    id: 'ch4', chapter: 4, beats: 4,
     head: { headline: x.headline, sub: x.sub, badges: badge(c.badges.both) },
     body: [
       h('div', { class: 'layer acc-a', 'data-show': '0-0' },
-        divergingBars({ bars: x.bars, notes: x.barNotes, title: x.barsTitle, glow: { co: 'MPW', year: YEARS[1] } }),
+        divergingBars({
+          bars: x.bars, notes: x.barNotes, title: x.barsTitle, marker: x.exGain,
+          glow: { co: x.exGain.co, year: x.exGain.year },
+        }),
         h('p', { class: 'chart-title' }, x.barsTitle, ' · ', h('span', { class: 'c-MPW' }, x.barNotes.glow))),
-      h('div', { class: 'layer acc-b', 'data-show': '1-2' },
+      h('div', { class: 'layer acc-b', 'data-show': '1-3' },
         niCfoLines({ ...x.lines, desc: x.lines.callout }),
         h('div', { class: 'aside' },
           h('h3', { class: 'aside-title' }, x.lines.title),
           h('p', { class: 'caption-lg pop' }, x.lines.callout),
-          h('div', { class: 'chips', 'data-show': '2-2' },
-            h('p', { class: 'chips-title' }, x.chipsTitle),
-            x.chips.map((t) => h('p', { class: 'chip pop' }, t)),
-            h('p', { class: 'anomalies pop' }, x.anomalies)))),
+          h('div', { class: 'swap' },
+            h('div', { class: 'chips', 'data-show': '2-2' },
+              h('p', { class: 'chips-title' }, x.chipsTitle),
+              x.chips.map((t) => h('p', { class: 'chip pop' }, t)),
+              h('p', { class: 'anomalies pop' }, x.anomalies)),
+            h('div', { class: 'chips', 'data-show': '3-3' },
+              h('p', { class: 'chips-title' }, x.limit.title),
+              h('p', { class: 'limit pop' }, x.limit.body),
+              h('p', { class: 'limit strong pop' }, x.limit.test))))),
     ],
   });
 }
@@ -153,7 +168,7 @@ function warnings() {
   const x = c.warnings;
   const tile = (t) => {
     const vals = t.series.flatMap((sr) => sr.values.map((v) => v.value)).filter((v) => v != null);
-    const domain = [Math.min(...vals), Math.max(...vals)];
+    const domain = [0, Math.max(...vals)];
     return h('article', { class: `tile pop ${t.pulse ? 'has-pulse' : ''}` },
       h('h3', {}, t.title),
       h('div', { class: 'tile-grid' },
@@ -168,14 +183,15 @@ function warnings() {
           t.footnote && h('p', { class: 'footnote' }, t.footnote))));
   };
   return scene({
-    id: 'ch5', chapter: 5, beats: 3,
-    head: { headline: x.headline, badges: [badge(c.badges.pre, '0-1'), badge(c.badges.outcome, '2-2')] },
+    id: 'ch5', chapter: 5, beats: 4,
+    head: { headline: x.headline, badges: [badge(c.badges.pre, '0-2'), badge(c.badges.outcome, '3-3')] },
     body: [
-      h('div', { class: 'layer tiles', 'data-show': '0-0' }, x.tiles.map(tile)),
-      h('div', { class: 'layer tl', 'data-show': '1-1' },
+      h('div', { class: 'layer tiles', 'data-show': '0-0' }, x.tiles.slice(0, 2).map(tile)),
+      h('div', { class: 'layer tiles', 'data-show': '1-1' }, x.tiles.slice(2).map(tile)),
+      h('div', { class: 'layer tl', 'data-show': '2-2' },
         h('h3', { class: 'section-title' }, x.timeline.title),
-        timeline({ ...x.timeline, years: YEARS })),
-      h('div', { class: 'layer check', 'data-show': '2-2' },
+        timeline(x.timeline)),
+      h('div', { class: 'layer check', 'data-show': '3-3' },
         h('div', {},
           h('h3', { class: 'section-title' }, `${x.check.title} · ${x.check.waterfallTitle}`),
           waterfall({ charges: x.check.charges, title: x.check.waterfallTitle })),
@@ -221,7 +237,20 @@ function ai() {
   });
 }
 
-export const buildScenes = () => [hero(), issue(), landlords(), performance(), accruals(), warnings(), verdict(), ai()];
+// ---------------------------------------------------------------- 8 Close
+function close(openAppendix) {
+  const x = c.close;
+  return scene({
+    id: 'ch8', chapter: 8, head: { headline: x.headline }, cls: 'scene-close',
+    body: h('div', { class: 'close' },
+      h('p', { class: 'question' }, x.question),
+      h('p', { class: 'pointer' }, x.pointer),
+      h('button', { class: 'btn', type: 'button', onclick: openAppendix }, x.button)),
+  });
+}
+
+export const buildScenes = ({ openAppendix }) =>
+  [hero(), issue(), landlords(), performance(), accruals(), warnings(), verdict(), ai(), close(openAppendix)];
 
 // ---------------------------------------------------------------- Appendix overlay
 export function buildAppendix() {
@@ -248,7 +277,8 @@ export function buildAppendix() {
     h('div', { class: 'appendix-inner' },
       h('header', {},
         h('h2', { id: 'appendix-h' }, x.title),
-        h('p', { class: 'hint' }, x.hint)),
+        h('p', { class: 'hint' }, x.hint),
+        h('button', { class: 'btn appendix-close', type: 'button' }, x.closeLabel)),
       h('div', { class: 'tabs', role: 'tablist', 'aria-label': x.title }, x.panels.map((p, k) =>
         h('button', {
           class: 'tab', role: 'tab', id: `ap-tab-${p.id}`, 'aria-controls': `ap-${p.id}`,

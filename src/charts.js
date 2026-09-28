@@ -5,6 +5,7 @@ import { scaleLinear, scaleBand, scalePoint, scaleTime } from 'd3-scale';
 import { line, area, curveStepAfter } from 'd3-shape';
 import { min, max, cumsum, range } from 'd3-array';
 import { s, h, frame } from './dom.js';
+import { showDate } from './format.js';
 
 const fyLabel = (y) => `FY${y}`;
 const add = (el, ...kids) => el.append(...kids.flat(Infinity).filter((k) => k != null && k !== false));
@@ -41,12 +42,13 @@ export function stepChart({ labels, title, desc }) {
     s('path', { class: 'gap gap-late pop', d: gap(steps.slice(cross)) }),
     s('line', { class: 'baseline', x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b }),
     s('path', { class: 'series c-dim draw', d: stepLine(steps) }),
-    s('path', { class: 'series c-MPW draw', d: `M${x(0)},${y(sl)}L${x(10)},${y(sl)}` }),
+    s('path', { class: 'series c-ill draw', d: `M${x(0)},${y(sl)}L${x(10)},${y(sl)}` }),
+    s('text', { class: 'lbl tag c-dim', x: m.l, y: m.t - 4 }, labels.tag),
     s('text', { class: 'lbl c-dim pop', x: x(10) + 14, y: y(cash[9]) + 6 }, labels.cash),
-    s('text', { class: 'lbl c-MPW pop', x: x(10) + 14, y: y(sl) + 6 }, labels.revenue),
-    s('text', { class: 'lbl c-MPW pop', x: m.l - 16, y: yr(max(rec) / 2), 'text-anchor': 'end' }, labels.receivable),
+    s('text', { class: 'lbl c-ill pop', x: x(10) + 14, y: y(sl) + 6 }, labels.revenue),
+    s('text', { class: 'lbl c-ill pop', x: m.l - 16, y: yr(max(rec) / 2), 'text-anchor': 'end' }, labels.receivable),
     years.map((k, i) => rec[i] > 0.5 && s('rect', {
-      class: `bar c-MPW ${i >= 5 ? 'late' : ''}`, 'data-grow': 'v', 'data-base': H - m.b,
+      class: `bar c-ill ${i >= 5 ? 'late' : ''}`, 'data-grow': 'v', 'data-base': H - m.b,
       x: x(k - 1) + 8, width: x(1) - x(0) - 16, y: yr(rec[i]), height: H - m.b - yr(rec[i]),
     })),
     years.map((k) => s('text', { class: 'axis', x: x(k - 0.5), y: H - 14, 'text-anchor': 'middle' }, `${labels.year} ${k}`)),
@@ -75,38 +77,10 @@ export function mixBar({ co, parts, title }) {
   return fig;
 }
 
-// ------------------------------------------------------------ Chapter 3: DuPont cell
-const DUPONT_MAX = { margin: 0.6, turnover: 0.12, leverage: 2.7 };
-
-export function dupontBars({ co, cell }) {
-  const W = 290, H = 84;
-  const rows = ['margin', 'turnover', 'leverage'];
-  const { fig, svg } = frame({
-    w: W, h: H, cls: `chart-dupont c-${co}`,
-    title: `${co} ${fyLabel(cell.year)} return on equity ${cell.text.roe}`,
-    desc: rows.map((k) => `${k} ${cell.text[k]}`).join(', '),
-    table: { head: ['Component', 'Value'], rows: [['ROE', cell.text.roe], ...rows.map((k) => [k, cell.text[k]])] },
-  });
-  rows.forEach((k, i) => {
-    const sc = scaleLinear([0, DUPONT_MAX[k]], [0, 100]).clamp(true);
-    const yy = i * 28;
-    add(svg, 
-      s('text', { class: 'lbl c-dim', x: 0, y: yy + 19 }, k),
-      s('rect', { class: 'track', x: 92, y: yy + 7, width: 100, height: 12, rx: 3 }),
-      s('rect', {
-        class: `bar ${cell[k] < 0 ? 'neg' : ''}`, 'data-grow': 'h', 'data-base': 92,
-        x: 92, y: yy + 7, width: Math.max(sc(Math.abs(cell[k])), 2), height: 12, rx: 3,
-      }),
-      s('text', { class: `lbl val ${cell[k] < 0 ? 'neg' : ''}`, x: 202, y: yy + 19 }, cell.text[k]),
-    );
-  });
-  return fig;
-}
-
 // ------------------------------------------------------------ Chapter 4: diverging accruals
-export function divergingBars({ bars, notes, title, glow }) {
-  const W = 1640, H = 590, m = { l: 10, r: 10, t: 86, b: 40 };
-  const all = bars.flatMap((b) => b.values.map((v) => v.value));
+export function divergingBars({ bars, notes, title, glow, marker }) {
+  const W = 1640, H = 560, m = { l: 10, r: 10, t: 96, b: 44 };
+  const all = [...bars.flatMap((b) => b.values.map((v) => v.value)), marker.value];
   const y = scaleLinear([min(all), max(all)], [H - m.b, m.t]);
   const xg = scaleBand(bars.map((b) => b.co), [m.l, W - m.r]).paddingInner(0.12);
   const { fig, svg } = frame({
@@ -114,7 +88,10 @@ export function divergingBars({ bars, notes, title, glow }) {
     desc: `${notes.glow}. ${notes.normal}.`,
     table: {
       head: ['Company', ...bars[0].values.map((v) => fyLabel(v.year))],
-      rows: bars.map((b) => [b.co, ...b.values.map((v) => v.text)]),
+      rows: [
+        ...bars.map((b) => [b.co, ...b.values.map((v) => v.text)]),
+        [`${marker.co} ${fyLabel(marker.year)}`, ...bars[0].values.map((v) => (v.year === marker.year ? marker.text : ''))],
+      ],
     },
   });
   add(svg, s('line', { class: 'baseline', x1: m.l, x2: W - m.r, y1: y(0), y2: y(0) }));
@@ -133,14 +110,21 @@ export function divergingBars({ bars, notes, title, glow }) {
           'data-grow': 'v', 'data-base': y(0), 'data-order': v.year,
           x: xi(v.year), width: xi.bandwidth(), y: top, height: Math.max(ht, 1), rx: 3,
         }),
-        s('text', { class: 'axis pop', x: cx, y: pos ? y(0) + 24 : y(0) - 10, 'text-anchor': 'middle' }, fyLabel(v.year)),
-        s('text', { class: `lbl val pop ${hot ? 'c-MPW strong' : ''}`, x: cx, y: pos ? top - 10 : top + ht + 22, 'text-anchor': 'middle' }, v.text),
+        s('text', { class: 'axis pop', x: cx, y: pos ? y(0) + 30 : y(0) - 12, 'text-anchor': 'middle' }, fyLabel(v.year)),
+        s('text', { class: `lbl val pop ${hot ? 'c-MPW strong' : ''}`, x: cx, y: pos ? top - 12 : top + ht + 28, 'text-anchor': 'middle' }, v.text),
       );
+      if (hot) {
+        const my = y(marker.value);
+        add(svg, s('g', { class: 'marker c-MPW pop' },
+          s('line', { class: 'stem', x1: cx, x2: cx, y1: y(0) + 40, y2: my }),
+          s('line', { class: 'cap', x1: xi(v.year), x2: xi(v.year) + xi.bandwidth(), y1: my, y2: my }),
+          s('text', { class: 'lbl val c-MPW', x: cx, y: my + 28, 'text-anchor': 'middle' }, marker.text)));
+      }
     }
   }
   add(svg, 
-    s('text', { class: 'lbl note c-dim pop', x: xg('OHI') + xg.bandwidth() / 2, y: y(min(all) * 0.45), 'text-anchor': 'middle' }, notes.normal),
-    s('text', { class: 'lbl note c-neg pop', x: xg('MPW') + xg.bandwidth() * 0.36, y: y(min(all) * 0.72), 'text-anchor': 'middle' }, notes.loss),
+    s('text', { class: 'lbl note c-dim pop', x: xg('OHI') + xg.bandwidth() / 2, y: y(min(all) * 0.62), 'text-anchor': 'middle' }, notes.normal),
+    s('text', { class: 'lbl note c-neg pop', x: xg('MPW') + xg.bandwidth() + 6, y: y(min(all) * 0.8), 'text-anchor': 'start' }, notes.loss),
   );
   return fig;
 }
@@ -186,7 +170,7 @@ export function niCfoLines({ ni, cfo, labels, title, desc }) {
 
 // ------------------------------------------------------------ Chapter 5: sparkline
 export function sparkline({ co, values, domain, title }) {
-  const W = 170, H = 48, pad = 8;
+  const W = 300, H = 64, pad = 10;
   const pts = values.filter((v) => v.value != null);
   const { fig, svg } = frame({
     w: W, h: H, title, cls: `chart-spark c-${co} ${co === 'MPW' ? '' : 'peer'}`,
@@ -201,7 +185,7 @@ export function sparkline({ co, values, domain, title }) {
   const y = scaleLinear(domain, [H - pad, pad]);
   add(svg, 
     s('path', { class: 'series draw', d: line().x((d) => x(d.year)).y((d) => y(d.value))(pts) }),
-    pts.map((d) => s('circle', { class: 'dot pop', cx: x(d.year), cy: y(d.value), r: 4.5 })),
+    pts.map((d) => s('circle', { class: 'dot pop', cx: x(d.year), cy: y(d.value), r: 6 })),
   );
   return fig;
 }
@@ -210,17 +194,8 @@ export function sparkline({ co, values, domain, title }) {
 function parseDate(str) {
   const q = /^(\d{4})-Q(\d)$/.exec(str);
   if (q) return new Date(Number(q[1]), (Number(q[2]) - 1) * 3 + 1, 15);
-  if (/^\d{4}$/.test(str)) return new Date(Number(str), 6, 1);
   const [yy, mm, dd] = str.split('-').map(Number);
   return new Date(yy, mm - 1, dd ?? 15);
-}
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-export function showDate(str) {
-  const q = /^(\d{4})-Q(\d)$/.exec(str);
-  if (q) return `Q${q[2]} ${q[1]}`;
-  if (/^\d{4}$/.test(str)) return str;
-  const [yy, mm, dd] = str.split('-').map(Number);
-  return dd ? `${MONTHS[mm - 1]} ${dd}, ${yy}` : `${MONTHS[mm - 1]} ${yy}`;
 }
 function wrap(text, n) {
   const out = [''];
@@ -231,50 +206,68 @@ function wrap(text, n) {
   return out;
 }
 
-export function timeline({ events, lanes, years, title }) {
-  const W = 1640, H = 560, m = { l: 60, r: 60 }, mid = H / 2;
-  const x = scaleTime([new Date(years[0], 0, 1), new Date(years[years.length - 1], 5, 30)], [m.l, W - m.r]);
+// Annual counts are drawn as year-long bands; dated events as points.
+export function timeline({ events, bands, lanes, title }) {
+  const W = 1640, H = 600, m = { l: 60, r: 60 }, mid = 200;
+  const years = bands.map((b) => b.year);
+  const last = years[years.length - 1];
+  const x = scaleTime([new Date(years[0], 0, 1), new Date(last + 1, 1, 15)], [m.l, W - m.r]);
   const { fig, svg } = frame({
     w: W, h: H, title, cls: 'chart-timeline',
-    desc: events.map((e) => `${showDate(e.date)}: ${e.text}`).join('. '),
-    table: { head: ['Company', 'Date', 'Event'], rows: events.map((e) => [e.co, showDate(e.date), e.text]) },
+    desc: [...bands.map((b) => `${b.year}: ${b.co} ${b.text}`), ...events.map((e) => `${showDate(e.date)}: ${e.text}`)].join('. '),
+    table: {
+      head: ['Company', 'Date', 'Event'],
+      rows: [...bands.map((b) => [b.co, b.year, b.text]), ...events.map((e) => [e.co, showDate(e.date), e.text])],
+    },
   });
-  add(svg, 
+  add(svg,
     s('line', { class: 'baseline strong draw', x1: m.l, x2: W - m.r, y1: mid, y2: mid }),
-    years.map((yr) => s('g', {},
-      s('line', { class: 'tick', x1: x(new Date(yr, 0, 1)), x2: x(new Date(yr, 0, 1)), y1: mid - 7, y2: mid + 7 }),
-      s('text', { class: 'axis', x: x(new Date(yr, 0, 1)) + 8, y: mid - 12 }, yr))),
-    s('text', { class: 'lbl name c-OHI', x: m.l, y: 34 }, lanes.above),
-    s('text', { class: 'lbl name c-MPW', x: m.l, y: H - 16 }, lanes.below),
+    [...years, last + 1].map((yr) => s('g', {},
+      s('line', { class: 'tick', x1: x(new Date(yr, 0, 1)), x2: x(new Date(yr, 0, 1)), y1: mid - 9, y2: mid + 9 }),
+      s('text', { class: 'axis', x: x(new Date(yr, 0, 1)) + 8, y: mid + 30 }, yr))),
+    s('text', { class: 'lbl name c-OHI', x: m.l, y: 30 }, lanes.above),
+    s('text', { class: 'lbl name c-MPW', x: m.l, y: H - 12 }, lanes.below),
   );
-  for (const lane of [lanes.above, lanes.below]) {
-    const evs = events.filter((e) => e.co === lane).map((e) => ({ ...e, px: x(parseDate(e.date)) }));
-    const dir = lane === lanes.above ? -1 : 1;
-    evs.forEach((e, k) => {
-      const crowdedNext = evs[k + 1] && evs[k + 1].px - e.px < 200;
-      const crowdedPrev = evs[k - 1] && e.px - evs[k - 1].px < 200;
-      const anchor = crowdedNext ? 'end' : crowdedPrev ? 'start' : 'middle';
-      const stem = crowdedNext ? 150 : 70;
-      const lines = wrap(e.text, 30);
-      const dx = anchor === 'end' ? -12 : anchor === 'start' ? 12 : 0;
-      const textTop = dir < 0 ? mid - stem - 14 - lines.length * 26 : mid + stem + 30;
-      add(svg, s('g', { class: `event c-${e.co} pop`, 'data-order': e.px },
-        s('line', { class: 'stem', x1: e.px, x2: e.px, y1: mid, y2: mid + dir * stem }),
-        s('circle', { class: 'dot', cx: e.px, cy: mid, r: 9 }),
-        s('text', { class: 'lbl date', x: e.px + dx, y: textTop, 'text-anchor': anchor }, showDate(e.date)),
-        lines.map((ln, i) => s('text', { class: 'lbl ev', x: e.px + dx, y: textTop + 28 + i * 26, 'text-anchor': anchor }, ln)),
-      ));
-    });
+  for (const b of bands) {
+    const x0 = x(new Date(b.year, 0, 1)) + 6, x1 = x(new Date(b.year + 1, 0, 1)) - 6;
+    const lines = wrap(b.text, 28);
+    add(svg, s('g', { class: `band c-${b.co} pop`, 'data-order': x0 },
+      s('rect', { class: 'span', x: x0, y: mid - 44, width: x1 - x0, height: 30, rx: 4 }),
+      lines.map((ln, i) => s('text', { class: 'lbl ev', x: x0 + 4, y: mid - 62 - (lines.length - 1 - i) * 30 }, ln))));
+  }
+  const evs = events.map((e) => ({ ...e, px: x(parseDate(e.date)), lines: wrap(e.text, 26) }));
+  evs.forEach((e, k) => {
+    const crowdedNext = evs[k + 1] && evs[k + 1].px - e.px < 330;
+    const crowdedPrev = evs[k - 1] && e.px - evs[k - 1].px < 330;
+    e.anchor = crowdedNext ? 'end' : crowdedPrev ? 'start' : 'middle';
+    e.stem = crowdedNext ? 150 : crowdedPrev ? 40 : 70;
+  });
+  // A label that would run off the right edge drops below its neighbour instead.
+  evs.forEach((e, k) => {
+    if (e.anchor !== 'start' || e.px + 12 + Math.max(...e.lines.map((ln) => ln.length)) * 12 < W) return;
+    e.anchor = 'middle';
+    e.stem = 240;
+    if (evs[k - 1]) evs[k - 1].stem = 120;
+  });
+  for (const e of evs) {
+    const dx = e.anchor === 'end' ? -12 : e.anchor === 'start' ? 12 : 0;
+    const textTop = mid + e.stem + 34;
+    add(svg, s('g', { class: `event c-${e.co} pop`, 'data-order': e.px },
+      s('line', { class: 'stem', x1: e.px, x2: e.px, y1: mid, y2: mid + e.stem }),
+      s('circle', { class: 'dot', cx: e.px, cy: mid, r: 9 }),
+      s('text', { class: 'lbl date', x: e.px + dx, y: textTop, 'text-anchor': e.anchor }, showDate(e.date)),
+      e.lines.map((ln, i) => s('text', { class: 'lbl ev', x: e.px + dx, y: textTop + 30 + i * 28, 'text-anchor': e.anchor }, ln)),
+    ));
   }
   return fig;
 }
 
 // ------------------------------------------------------------ Chapter 5: Steward charges waterfall
 export function waterfall({ charges, title }) {
-  const W = 1060, row = 40, gap = 22;
+  const W = 1140, row = 42, gap = 22;
   const n = charges.reduce((a, g) => a + g.items.length + 1, 0);
   const H = n * row + gap * (charges.length - 1) + 8;
-  const x = scaleLinear([0, max(charges, (g) => g.total)], [440, W - 110]);
+  const x = scaleLinear([0, max(charges, (g) => g.total)], [530, W - 120]);
   const { fig, svg } = frame({
     w: W, h: H, title, cls: 'chart-waterfall',
     desc: charges.map((g) => `${fyLabel(g.year)} total ${g.totalText}`).join(', '),
@@ -287,14 +280,14 @@ export function waterfall({ charges, title }) {
   charges.forEach((g, gi) => {
     let acc = 0;
     add(svg, 
-      s('text', { class: 'lbl name c-MPW', x: 430, y: yy + 27, 'text-anchor': 'end' }, `${fyLabel(g.year)} total`),
+      s('text', { class: 'lbl name c-MPW', x: 518, y: yy + 28, 'text-anchor': 'end' }, `${fyLabel(g.year)} total`),
       s('rect', { class: 'bar total', 'data-grow': 'h', 'data-base': x(0), x: x(0), y: yy + 8, width: x(g.total) - x(0), height: row - 16, rx: 3 }),
       s('text', { class: 'lbl val strong pop', x: x(g.total) + 10, y: yy + 27 }, g.totalText),
     );
     yy += row;
     for (const it of g.items) {
       add(svg, 
-        s('text', { class: 'lbl c-dim', x: 430, y: yy + 26, 'text-anchor': 'end' }, it.label),
+        s('text', { class: 'lbl c-dim', x: 518, y: yy + 28, 'text-anchor': 'end' }, it.label),
         s('rect', { class: 'bar item', 'data-grow': 'h', 'data-base': x(acc), x: x(acc), y: yy + 9, width: Math.max(x(it.value) - x(0), 2), height: row - 18, rx: 3 }),
         s('text', { class: 'lbl val pop', x: x(acc + it.value) + 10, y: yy + 26 }, it.text),
       );
@@ -332,7 +325,7 @@ export function heroArt({ buildings, tokenLabels, title, desc }) {
     s('text', { class: 'lbl c-MPW pop', x: 435, y: 44, 'text-anchor': 'middle' }, tokenLabels.out),
     s('text', { class: 'lbl c-MPW pop', x: 435, y: 300, 'text-anchor': 'middle' }, tokenLabels.back),
     s('g', { id: 'hero-token', class: 'token c-MPW', transform: 'translate(435,83)' },
-      s('circle', { r: 17 }), s('text', { y: 7, 'text-anchor': 'middle' }, '$')),
+      s('circle', { r: 18 }), s('text', { y: 8, 'text-anchor': 'middle' }, '$')),
   );
   return fig;
 }

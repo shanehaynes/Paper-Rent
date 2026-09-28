@@ -1,0 +1,7 @@
+node_modules
+screenshots
+.DS_Store
+# Working files kept out of the public repo
+Paper Rent - Claude Code build prompt.md
+Paper Rent - ratio workbook (filled).xlsx
+sec

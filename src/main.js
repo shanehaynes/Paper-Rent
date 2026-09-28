@@ -14,7 +14,10 @@ const scenes = buildScenes();
 deckEl.append(...scenes.map((sc) => sc.el));
 
 // ---- footer
-document.body.append(h('footer', { class: 'site-footer' }, c.footer));
+document.body.append(
+  h('footer', { class: 'site-footer' }, c.footer),
+  h('p', { class: 'authors' }, c.authors),
+);
 
 // ---- progress rail: one dot per main chapter
 const chapters = scenes.filter((sc) => sc.chapter > 0);

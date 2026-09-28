@@ -25,6 +25,8 @@ export const SHORT = { MPW: 'MPW', OHI: 'Omega', SBRA: 'Sabra' };
 export const footer =
   `Source: company Form 10-K filings ${fy(Y21)}–${fy(Y24)} (SEC EDGAR). GAAP figures only; FFO/AFFO excluded.`;
 
+export const authors = ['Annie Wang', 'Rachel Rosenberg', 'Shane Haynes'].join(' · ');
+
 export const badges = {
   pre: `Pre-event window ${fy(Y21)}–${fy(Y23)}`,
   outcome: `Outcome window ${fy(Y24)}`,

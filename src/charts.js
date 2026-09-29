@@ -81,7 +81,12 @@ export function mixBar({ co, parts, title }) {
 export function divergingBars({ bars, notes, title, glow, marker }) {
   const W = 1640, H = 560, m = { l: 10, r: 10, t: 96, b: 44 };
   const all = [...bars.flatMap((b) => b.values.map((v) => v.value)), marker.value];
-  const y = scaleLinear([min(all), max(all)], [H - m.b, m.t]);
+  // One outlier far below the rest (MPW FY2024) is drawn clipped with a break mark so the
+  // other bars stay readable; its label still shows the full value.
+  const sorted = [...all].sort((a, b) => a - b);
+  const clip = sorted[0] < 1.8 * sorted[1] ? sorted[1] * 1.3 : null;
+  const lo = clip ?? sorted[0];
+  const y = scaleLinear([lo, max(all)], [H - m.b, m.t]);
   const xg = scaleBand(bars.map((b) => b.co), [m.l, W - m.r]).paddingInner(0.12);
   const { fig, svg } = frame({
     w: W, h: H, title, cls: 'chart-accruals',
@@ -100,8 +105,10 @@ export function divergingBars({ bars, notes, title, glow, marker }) {
     add(svg, s('text', { class: `lbl name c-${b.co}`, x: xg(b.co) + xg.bandwidth() / 2, y: 26, 'text-anchor': 'middle' }, b.co));
     for (const v of b.values) {
       const pos = v.value >= 0;
-      const top = pos ? y(v.value) : y(0);
-      const ht = Math.abs(y(v.value) - y(0));
+      const clipped = clip != null && v.value < clip;
+      const shown = clipped ? clip : v.value;
+      const top = pos ? y(shown) : y(0);
+      const ht = Math.abs(y(shown) - y(0));
       const cx = xi(v.year) + xi.bandwidth() / 2;
       const hot = glow.co === b.co && glow.year === v.year;
       add(svg, 
@@ -112,19 +119,21 @@ export function divergingBars({ bars, notes, title, glow, marker }) {
         }),
         s('text', { class: 'axis pop', x: cx, y: pos ? y(0) + 30 : y(0) - 12, 'text-anchor': 'middle' }, fyLabel(v.year)),
         s('text', { class: `lbl val pop ${hot ? 'c-MPW strong' : ''}`, x: cx, y: pos ? top - 12 : top + ht + 28, 'text-anchor': 'middle' }, v.text),
+        clipped && s('g', { class: 'break pop' },
+          [0, 12].map((dy) => s('line', { x1: xi(v.year) - 4, x2: xi(v.year) + xi.bandwidth() + 4, y1: top + ht - 40 + dy + 6, y2: top + ht - 40 + dy - 6 }))),
       );
       if (hot) {
         const my = y(marker.value);
         add(svg, s('g', { class: 'marker c-MPW pop' },
           s('line', { class: 'stem', x1: cx, x2: cx, y1: y(0) + 40, y2: my }),
           s('line', { class: 'cap', x1: xi(v.year), x2: xi(v.year) + xi.bandwidth(), y1: my, y2: my }),
-          s('text', { class: 'lbl val c-MPW', x: cx, y: my + 28, 'text-anchor': 'middle' }, marker.text)));
+          s('text', { class: 'lbl val c-MPW', x: xi(v.year) + xi.bandwidth(), y: my + 28, 'text-anchor': 'end' }, marker.text)));
       }
     }
   }
   add(svg, 
-    s('text', { class: 'lbl note c-dim pop', x: xg('OHI') + xg.bandwidth() / 2, y: y(min(all) * 0.62), 'text-anchor': 'middle' }, notes.normal),
-    s('text', { class: 'lbl note c-neg pop', x: xg('MPW') + xg.bandwidth() + 6, y: y(min(all) * 0.8), 'text-anchor': 'start' }, notes.loss),
+    s('text', { class: 'lbl note c-dim pop', x: xg('OHI') + xg.bandwidth() / 2, y: y(lo * 0.62), 'text-anchor': 'middle' }, notes.normal),
+    s('text', { class: 'lbl note c-neg pop', x: xg('MPW') + xg.bandwidth() + 6, y: y(lo * 0.8), 'text-anchor': 'start' }, notes.loss),
   );
   return fig;
 }

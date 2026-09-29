@@ -115,6 +115,7 @@ ul, ol { list-style: none; }
 .hero-foot { margin-top: 1rem; justify-items: center; align-items: center; min-height: 3rem; }
 .cue { color: var(--gray); font-size: 0.96rem; letter-spacing: 0.06em; }
 .hero-caption { font-size: 1.25rem; font-weight: 500; max-width: 52rem; }
+.people { font-size: 1.1rem; color: var(--text); font-weight: 500; margin: -0.6rem 0 1rem; letter-spacing: 0.01em; }
 html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text.pop) { opacity: 0; }
 .chart-hero .bldg rect { fill: none; stroke: currentColor; stroke-width: 2.5; }
 .chart-hero .bldg .win { stroke-width: 1.5; opacity: 0.55; }
@@ -183,7 +184,9 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 
 /* ---------- 4 accruals */
 .acc-a { display: flex; flex-direction: column; gap: 0.5rem; }
-.chart-title { font-size: 1rem; color: var(--gray); }
+.chart-title { font-size: 1rem; color: #c7c7cc; line-height: 1.35; }
+.chart-title.dim { color: var(--gray); font-size: 0.96rem; }
+.chart .break line { stroke: var(--bg); stroke-width: 5; }
 .layer.acc-b { display: grid; grid-template-columns: auto 1fr; gap: 2.4rem; align-items: center; }
 .acc-b .aside { padding-top: 0.6rem; }
 .chips { display: flex; flex-direction: column; gap: 0.55rem; }
@@ -209,6 +212,8 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 .tile .summary { font-size: 0.96rem; color: #aeaeb2; }
 .tile .caption { font-size: 1.1rem; line-height: 1.3; }
 .tl { display: flex; flex-direction: column; }
+.tl-note { font-size: 1.05rem; line-height: 1.35; margin-top: 0.4rem; max-width: 74rem; }
+.tile .row .latest.is-nd { font-size: 1.3rem; color: #aeaeb2; }
 .layer.check { display: grid; grid-template-columns: auto 1fr; gap: 2.6rem; align-items: center; }
 .check .section-title { margin-bottom: 0.5rem; }
 .stat-label { font-size: 0.96rem; color: var(--gray); }
@@ -217,26 +222,29 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 .closing { font-size: 1.1rem; font-weight: 500; line-height: 1.35; border-top: 1px solid var(--line); padding-top: 1rem; }
 
 /* ---------- 6 verdict */
-.verdict { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.1rem; }
-.verdict .signal { grid-column: span 3; }
-.verdict .paper { grid-column: span 2; }
-.verdict .against { grid-column: span 4; background: transparent; border: 1.5px dashed #636366; }
-.verdict .card p { font-size: 1rem; line-height: 1.38; }
+.layer.verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-content: center; }
+.verdict .stance { grid-column: 1 / -1; font-size: 1.3rem; line-height: 1.35; font-weight: 500; border-left: 3px solid var(--mpw); padding-left: 1rem; }
+.verdict .support { grid-column: 1 / -1; font-size: 1rem; color: #c7c7cc; line-height: 1.35; }
+.verdict .card p { font-size: 1.05rem; line-height: 1.38; }
 .verdict .card .kicker { font-size: 0.96rem; }
 .verdict .signal h3 { font-size: 1.6rem; }
-.verdict .against .response { margin-top: 0.7rem; color: var(--text); font-weight: 500; }
-.verdict .against .fact { color: #c7c7cc; }
+.verdict .limit-note { margin-top: 0.7rem; color: #aeaeb2; font-size: 0.96rem !important; }
+.layer.verdict-b { justify-content: center; }
+.against { background: transparent; border: 1.5px dashed #636366; padding: 2rem 2.4rem; }
+.against .fact { font-size: 1.6rem; line-height: 1.3; font-weight: 600; color: var(--text); }
+.against .more { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.against .more li { font-size: 1.1rem; color: #c7c7cc; border-left: 3px solid #636366; padding-left: 1rem; }
+.against .response { margin-top: 1.4rem; font-size: 1.25rem; color: var(--text); font-weight: 500; line-height: 1.35; }
 
-/* ---------- 7 AI */
-.ai .card { padding: 1.5rem 1.6rem; }
-.ai .card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-.ai li { font-size: 1rem; line-height: 1.35; padding: 0.7rem 0; border-top: 1px solid var(--line); }
-
-/* ---------- 8 close */
-.close { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.4rem; }
-.close .question { font-size: 5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
-.close .pointer { font-size: 1.3rem; color: #c7c7cc; }
-.close .btn { font-size: 1.1rem; padding: 0.45rem 1.4rem; }
+/* ---------- 7 AI and questions */
+.ai-wrap { display: flex; flex-direction: column; gap: 1.6rem; justify-content: center; }
+.ai .card { padding: 1.3rem 1.5rem; }
+.ai .card h3 { font-size: 1.4rem; margin-bottom: 0.7rem; }
+.ai li { font-size: 1rem; line-height: 1.33; padding: 0.55rem 0; border-top: 1px solid var(--line); }
+.close { display: flex; align-items: baseline; gap: 1.6rem; flex-wrap: wrap; }
+.close .question { font-size: 3.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.close .pointer { font-size: 1.1rem; color: #c7c7cc; }
+.close .btn { font-size: 1rem; padding: 0.4rem 1.3rem; }
 
 /* ---------- chrome: footer, rail, position, timer */
 .site-footer {
@@ -282,6 +290,9 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 .tab[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
 .tab:focus-visible { outline: 2px solid var(--ohi); }
 .panel h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.7rem; }
+.tables { display: flex; flex-direction: column; gap: 1.1rem; }
+.table-title { font-size: 1rem; font-weight: 600; margin: 0 0 0.3rem; }
+table.data.text td { text-align: left; white-space: normal; max-width: 22rem; }
 .panel[hidden] { display: none; }
 table.data { border-collapse: collapse; font-size: 0.96rem; font-variant-numeric: tabular-nums; }
 table.data caption { text-align: left; color: var(--gray); font-size: 0.96rem; padding-bottom: 0.4rem; }
@@ -324,7 +335,8 @@ table.data tr.total th, table.data tr.total td { font-weight: 700; border-top: 1
   [data-show], [data-show].is-on { opacity: 1; visibility: visible; transition: none; }
   .swap { display: flex; flex-direction: column; gap: 1.2rem; }
   .cue { display: none; }
-  .statements, .cols3, .perf, .verdict { display: flex; flex-direction: column; }
+  .statements, .cols3, .perf, .layer.verdict { display: flex; flex-direction: column; }
+  .layer.verdict-b { position: static; }
   .statement { min-height: 0; }
   .profile .big { font-size: 3.6rem; }
   .perf { height: auto; }
@@ -337,7 +349,7 @@ table.data tr.total th, table.data tr.total td { font-weight: 700; border-top: 1
   .tile .row { grid-template-columns: 3.6rem 1fr auto; }
   .tile .row .latest, .tile .row.is-mpw .latest { font-size: 1.4rem; }
   .stat-value { font-size: 1.6rem; }
-  .close .question { font-size: 3rem; }
+  .close .question { font-size: 2.6rem; }
   .frame * { min-width: 0; }
   .layer > *, .aside { max-width: 100%; }
   .fig { overflow-x: auto; max-width: 100%; }
@@ -355,3 +367,67 @@ table.data tr.total th, table.data tr.total td { font-weight: 700; border-top: 1
   .groups { flex-direction: column; gap: 1.5rem; }
   .links li { grid-template-columns: 1fr; }
 }
+
+/* ---------- static slide deck (?print): 1920×1080 pages, every beat shown */
+@page { size: 1920px 1080px; margin: 0; }
+html.print { font-size: 22px; }
+html.print body { background: var(--bg); }
+.print .scene, .print .page { height: auto; }
+.print .page { width: 1920px; height: 1080px; overflow: hidden; break-after: page; page-break-after: always; position: relative; }
+.print .stage { position: static; height: 1080px; display: block; overflow: hidden; }
+.print .frame { width: 1920px; height: 1080px; margin: 0; padding: 2.2rem 4.4rem 3.2rem; }
+.print .scene-head { margin-bottom: 0.9rem; }
+.print .headline { font-size: 2.3rem; }
+.print .scene-body { overflow: hidden; }
+.print .fit-inner { transform-origin: 0 0; }
+.print .layer { position: static; inset: auto; margin-bottom: 1.1rem; }
+.print .scene-body > :not(.layer), .print .fit-inner > :not(.layer) { height: auto; }
+.print [data-show] { opacity: 1; visibility: visible; transition: none; }
+.print .badge-slot { gap: 0.6rem; }
+.print .badge-slot .badge[data-show] { position: static; }
+.print .swap { display: flex; flex-direction: column; gap: 0.9rem; }
+.print .cue, .print .hero-foot { display: none; }
+.print .tile .row.pulse { animation: none; }
+.print .print-title { display: flex; align-items: baseline; gap: 1.4rem; margin-bottom: 0.6rem; }
+.print .print-name { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; }
+.print .print-title .people { margin: 0; }
+.print .statement { min-height: 0; padding: 1.1rem 1.3rem; }
+.print #ch1 .layer.issue-b { grid-template-columns: 34rem 1fr; }
+.print #ch1 .chart-step { width: 34rem !important; height: auto !important; }
+/* slide 4: accruals chart beside the reconciliation; the NI-vs-CFO chart is text only */
+.print #ch4 .fit-inner { display: grid; grid-template-columns: 1.35fr 1fr; column-gap: 2rem; align-items: start; }
+.print #ch4 .layer.acc-b { display: block; }
+.print #ch4 .chart-accruals { width: 100% !important; height: auto !important; }
+.print #ch4 .caption-lg { font-size: 1.25rem; }
+/* slide 5: four tiles in a row, recognition timeline below */
+.print #ch5 .fit-inner { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 1rem; }
+.print #ch5 .layer.tiles { display: contents; }
+.print #ch5 .tile { padding: 1rem 1.1rem; margin-bottom: 1rem; }
+.print #ch5 .tile h3 { font-size: 1.1rem; }
+.print #ch5 .tile .row { grid-template-columns: 3.4rem 1fr auto; padding: 0.2rem 0.3rem; }
+.print #ch5 .tile .row .latest, .print #ch5 .tile .row.is-mpw .latest { font-size: 1.3rem; }
+.print #ch5 .chart-spark { width: 100% !important; height: auto !important; }
+.print #ch5 .tile .caption { font-size: 0.96rem; }
+.print #ch5 .layer.tl { grid-column: 1 / -1; display: grid; grid-template-columns: 1.4fr 1fr; column-gap: 2rem; align-items: center; }
+.print #ch5 .layer.tl .section-title { grid-column: 1 / -1; }
+.print #ch5 .chart-timeline { width: 60rem !important; height: auto !important; margin-bottom: 1rem; }
+.print #ch5 .tl-note { font-size: 1.15rem; }
+/* slide 6: position, two signals and the counterargument, then the FY2024 check */
+.print #ch6 .fit-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 1.1rem; align-items: start; }
+.print #ch6 .layer.verdict { display: contents; }
+.print #ch6 .stance { grid-column: 1 / -1; margin-bottom: 1rem; }
+.print #ch6 .support { grid-column: 1 / -1; margin: 0.8rem 0 1rem; }
+.print #ch6 .layer.verdict-b { grid-row: 2; grid-column: 3; margin: 0; }
+.print #ch6 .against { padding: 1.2rem 1.4rem; }
+.print #ch6 .against .fact { font-size: 1.1rem; }
+.print #ch6 .against .more li, .print #ch6 .against .response { font-size: 0.96rem; }
+.print #ch6 .layer.check { grid-column: 1 / -1; grid-template-columns: auto 1fr; gap: 3rem; }
+.print #ch6 .chart-waterfall { width: 38rem !important; height: auto !important; }
+.print .page-foot {
+  position: absolute; left: 4.4rem; right: 4.4rem; bottom: 1rem; display: flex; justify-content: space-between; gap: 2rem;
+  font-size: 0.8rem; color: var(--gray);
+}
+.print .ap-page .panel { display: block; }
+.print .ap-page table.data th, .print .ap-page table.data td { white-space: normal; }
+.print .ap-page .links { columns: 2; column-gap: 2rem; }
+.print .ap-page .links li { grid-template-columns: 10rem 1fr; break-inside: avoid; }

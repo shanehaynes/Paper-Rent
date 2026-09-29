@@ -10,7 +10,9 @@
     "copy": "node scripts/render-copy.mjs",
     "verify": "node scripts/verify-numbers.mjs",
     "screenshots": "node scripts/screenshots.mjs",
-    "rehearse": "node scripts/rehearse.mjs"
+    "rehearse": "node scripts/rehearse.mjs",
+    "ratios": "node scripts/compute-ratios.mjs",
+    "pdf": "vite build && node scripts/verify-numbers.mjs && node scripts/export-pdf.mjs"
   },
   "dependencies": {
     "d3-array": "^3.2.4",

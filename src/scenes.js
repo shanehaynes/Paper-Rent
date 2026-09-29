@@ -10,7 +10,7 @@ import {
 const pad2 = (n) => String(n).padStart(2, '0');
 
 function scene({ id, chapter, beats = 1, head, body, cls = '' }) {
-  const label = chapter ? c.rail[chapter - 1] : c.hero.title;
+  const label = c.rail[chapter - 1];
   const hid = `${id}-h`;
   const el = h('section', {
     class: `scene ${cls}`, id, 'data-chapter': chapter, 'data-beats': beats,
@@ -30,22 +30,22 @@ function scene({ id, chapter, beats = 1, head, body, cls = '' }) {
 
 const badge = (text, show) => h('p', { class: 'badge', 'data-show': show }, text);
 
-// ---------------------------------------------------------------- 0 Hero
+// ---------------------------------------------------------------- 1 Title card (part of slide 1)
 function hero() {
   const x = c.hero;
-  const sc = scene({
-    id: 'hero', chapter: 0, beats: 2, cls: 'scene-hero',
+  return scene({
+    id: 'hero', chapter: 1, beats: 2, cls: 'scene-hero',
     body: [
       h('p', { class: 'eyebrow' }, x.eyebrow),
       h('h1', { id: 'hero-h', class: 'title' }, x.title),
       h('p', { class: 'subtitle' }, x.subtitle),
+      h('p', { class: 'people' }, x.people),
       heroArt({ buildings: x.buildings, tokenLabels: x.tokenLabels, title: x.artTitle, desc: x.artDesc }),
       h('div', { class: 'swap hero-foot' },
         h('p', { class: 'cue', 'data-show': '0-0' }, x.cue),
         h('p', { class: 'hero-caption', 'data-show': '1-1' }, x.caption)),
     ],
   });
-  return sc;
 }
 
 // ---------------------------------------------------------------- 1 Issue
@@ -70,7 +70,7 @@ function issue() {
   });
 }
 
-// ---------------------------------------------------------------- 2 Landlords
+// ---------------------------------------------------------------- 2 Business models
 function landlords() {
   const x = c.landlords;
   return scene({
@@ -100,10 +100,9 @@ function landlords() {
 // ---------------------------------------------------------------- 3 Performance
 function performance() {
   const x = c.performance;
-  const focusOrder = [null, 'OHI', 'MPW', 'SBRA'];
   const pointCo = ['OHI', 'MPW', 'SBRA'];
-  const sc = scene({
-    id: 'ch3', chapter: 3, beats: 4, head: { headline: x.headline },
+  return scene({
+    id: 'ch3', chapter: 3, beats: 1, head: { headline: x.headline },
     body: h('div', { class: 'perf' },
       h('div', { class: 'dupont' },
         h('p', { class: 'formula' }, x.formula),
@@ -114,9 +113,9 @@ function performance() {
             row.cells.map((cell) =>
               h('div', { class: `cell c-${row.co}`, 'data-co': row.co, 'data-year': cell.year },
                 h('p', { class: `roe ${cell.roe < 0 ? 'neg' : ''}`, 'data-k': 'roe' }, cell.text.roe, h('span', {}, 'ROE')),
-                h('dl', { class: 'parts' }, ['margin', 'turnover', 'leverage'].map((k) =>
+                h('dl', { class: 'parts' }, ['ni', 'cfo'].map((k) =>
                   h('div', {},
-                    h('dt', {}, k),
+                    h('dt', {}, x.labels[k]),
                     h('dd', { class: cell[k] < 0 ? 'neg' : '', 'data-k': k }, cell.text[k])))))),
           ]))),
       h('div', { class: 'perf-side' },
@@ -125,18 +124,13 @@ function performance() {
         h('p', { class: 'verdict-line' }, x.verdict),
         h('p', { class: 'footnote' }, x.footnote))),
   });
-  sc.onBeat = (k) => {
-    const f = focusOrder[k];
-    if (f) sc.el.setAttribute('data-focus', f); else sc.el.removeAttribute('data-focus');
-  };
-  return sc;
 }
 
-// ---------------------------------------------------------------- 4 Accruals
+// ---------------------------------------------------------------- 4 Earnings vs. cash
 function accruals() {
   const x = c.accruals;
   return scene({
-    id: 'ch4', chapter: 4, beats: 4,
+    id: 'ch4', chapter: 4, beats: 3,
     head: { headline: x.headline, sub: x.sub, badges: badge(c.badges.both) },
     body: [
       h('div', { class: 'layer acc-a', 'data-show': '0-0' },
@@ -144,18 +138,19 @@ function accruals() {
           bars: x.bars, notes: x.barNotes, title: x.barsTitle, marker: x.exGain,
           glow: { co: x.exGain.co, year: x.exGain.year },
         }),
-        h('p', { class: 'chart-title' }, x.barsTitle, ' · ', h('span', { class: 'c-MPW' }, x.barNotes.glow))),
-      h('div', { class: 'layer acc-b', 'data-show': '1-3' },
+        h('p', { class: 'chart-title' }, x.barsTitle, ' · ', h('span', { class: 'c-MPW' }, x.barNotes.glow), '. ', x.gainNote),
+        h('p', { class: 'chart-title dim' }, x.barNotes.exGain)),
+      h('div', { class: 'layer acc-b', 'data-show': '1-2' },
         niCfoLines({ ...x.lines, desc: x.lines.callout }),
         h('div', { class: 'aside' },
           h('h3', { class: 'aside-title' }, x.lines.title),
           h('p', { class: 'caption-lg pop' }, x.lines.callout),
           h('div', { class: 'swap' },
-            h('div', { class: 'chips', 'data-show': '2-2' },
+            h('div', { class: 'chips', 'data-show': '1-1' },
               h('p', { class: 'chips-title' }, x.chipsTitle),
               x.chips.map((t) => h('p', { class: 'chip pop' }, t)),
               h('p', { class: 'anomalies pop' }, x.anomalies)),
-            h('div', { class: 'chips', 'data-show': '3-3' },
+            h('div', { class: 'chips', 'data-show': '2-2' },
               h('p', { class: 'chips-title' }, x.limit.title),
               h('p', { class: 'limit pop' }, x.limit.body),
               h('p', { class: 'limit strong pop' }, x.limit.test))))),
@@ -163,35 +158,63 @@ function accruals() {
   });
 }
 
-// ---------------------------------------------------------------- 5 Warnings
+// ---------------------------------------------------------------- 5 Pre-event risk
+export function riskTile(t) {
+  const vals = t.series.flatMap((sr) => sr.values.map((v) => v.value)).filter((v) => v != null);
+  const domain = [0, Math.max(...vals)];
+  return h('article', { class: `tile pop ${t.pulse ? 'has-pulse' : ''}` },
+    h('h3', {}, t.title),
+    h('div', { class: 'tile-grid' },
+      h('div', { class: 'rows' }, t.series.map((sr) =>
+        h('div', { class: `row c-${sr.co} ${sr.co === 'MPW' ? 'is-mpw' : ''} ${t.pulse === sr.co ? 'pulse' : ''}` },
+          h('span', { class: 'co' }, sr.co),
+          sparkline({ co: sr.co, values: sr.values, domain, title: `${sr.co}: ${t.title}` }),
+          h('span', { class: `latest ${t.ndText?.[sr.co] ? 'is-nd' : ''}` },
+            nd(t.ndText?.[sr.co] ?? sr.latest, t.nd?.[sr.co]))))),
+      h('div', { class: 'tile-text' },
+        h('p', { class: 'summary' }, t.summary),
+        h('p', { class: 'caption' }, t.caption),
+        t.footnote && h('p', { class: 'footnote' }, t.footnote))));
+}
+
 function warnings() {
   const x = c.warnings;
-  const tile = (t) => {
-    const vals = t.series.flatMap((sr) => sr.values.map((v) => v.value)).filter((v) => v != null);
-    const domain = [0, Math.max(...vals)];
-    return h('article', { class: `tile pop ${t.pulse ? 'has-pulse' : ''}` },
-      h('h3', {}, t.title),
-      h('div', { class: 'tile-grid' },
-        h('div', { class: 'rows' }, t.series.map((sr) =>
-          h('div', { class: `row c-${sr.co} ${sr.co === 'MPW' ? 'is-mpw' : ''} ${t.pulse === sr.co ? 'pulse' : ''}` },
-            h('span', { class: 'co' }, sr.co),
-            sparkline({ co: sr.co, values: sr.values, domain, title: `${sr.co}: ${t.title}` }),
-            h('span', { class: 'latest' }, nd(sr.latest, t.nd?.[sr.co]))))),
-        h('div', { class: 'tile-text' },
-          h('p', { class: 'summary' }, t.summary),
-          h('p', { class: 'caption' }, t.caption),
-          t.footnote && h('p', { class: 'footnote' }, t.footnote))));
-  };
   return scene({
-    id: 'ch5', chapter: 5, beats: 4,
-    head: { headline: x.headline, badges: [badge(c.badges.pre, '0-2'), badge(c.badges.outcome, '3-3')] },
+    id: 'ch5', chapter: 5, beats: 3,
+    head: { headline: x.headline, badges: badge(c.badges.pre) },
     body: [
-      h('div', { class: 'layer tiles', 'data-show': '0-0' }, x.tiles.slice(0, 2).map(tile)),
-      h('div', { class: 'layer tiles', 'data-show': '1-1' }, x.tiles.slice(2).map(tile)),
+      h('div', { class: 'layer tiles', 'data-show': '0-0' }, x.tiles.slice(0, 2).map(riskTile)),
+      h('div', { class: 'layer tiles', 'data-show': '1-1' }, x.tiles.slice(2).map(riskTile)),
       h('div', { class: 'layer tl', 'data-show': '2-2' },
         h('h3', { class: 'section-title' }, x.timeline.title),
-        timeline(x.timeline)),
-      h('div', { class: 'layer check', 'data-show': '3-3' },
+        timeline(x.timeline),
+        h('p', { class: 'tl-note pop' }, x.timeline.note)),
+    ],
+  });
+}
+
+// ---------------------------------------------------------------- 6 Verdict and FY2024 check
+function verdict() {
+  const x = c.verdict;
+  return scene({
+    id: 'ch6', chapter: 6, beats: 3,
+    head: { headline: x.headline, badges: [badge(c.badges.pre, '0-1'), badge(c.badges.outcome, '2-2')] },
+    body: [
+      h('div', { class: 'layer verdict', 'data-show': '0-0' },
+        h('p', { class: 'stance pop' }, x.position),
+        x.signals.map((sg) => h('article', { class: 'card signal pop' },
+          h('p', { class: 'kicker c-MPW' }, sg.kicker),
+          h('h3', {}, sg.title),
+          h('p', {}, sg.body),
+          h('p', { class: 'limit-note' }, sg.limit))),
+        h('p', { class: 'support pop' }, x.support)),
+      h('div', { class: 'layer verdict-b', 'data-show': '1-1' },
+        h('article', { class: 'card against pop' },
+          h('p', { class: 'kicker' }, x.against.title),
+          h('p', { class: 'fact' }, x.against.fact),
+          h('ul', { class: 'more' }, x.against.more.map((t) => h('li', {}, t))),
+          h('p', { class: 'response' }, x.against.response))),
+      h('div', { class: 'layer check', 'data-show': '2-2' },
         h('div', {},
           h('h3', { class: 'section-title' }, `${x.check.title} · ${x.check.waterfallTitle}`),
           waterfall({ charges: x.check.charges, title: x.check.waterfallTitle })),
@@ -205,68 +228,43 @@ function warnings() {
   });
 }
 
-// ---------------------------------------------------------------- 6 Verdict
-function verdict() {
-  const x = c.verdict;
-  return scene({
-    id: 'ch6', chapter: 6, beats: 3, head: { headline: x.headline },
-    body: h('div', { class: 'verdict' },
-      x.signals.map((sg) => h('article', { class: 'card signal', 'data-show': '0-2' },
-        h('p', { class: 'kicker c-MPW' }, sg.kicker),
-        h('h3', {}, sg.title),
-        h('p', {}, sg.body))),
-      h('article', { class: 'card paper', 'data-show': '1-2' },
-        h('h3', {}, x.paper.title),
-        h('p', {}, x.paper.body)),
-      h('article', { class: 'card against', 'data-show': '2-2' },
-        h('p', { class: 'kicker' }, x.against.title),
-        h('p', { class: 'fact' }, x.against.fact),
-        h('p', { class: 'response' }, x.against.response))),
-  });
-}
-
-// ---------------------------------------------------------------- 7 AI
-function ai() {
+// ---------------------------------------------------------------- 7 AI use and questions
+function ai(openAppendix) {
   const x = c.ai;
   return scene({
     id: 'ch7', chapter: 7, head: { headline: x.headline },
-    body: h('div', { class: 'cols3 ai' }, x.columns.map((col) =>
-      h('article', { class: 'card pop' },
-        h('h3', {}, col.title),
-        h('ul', {}, col.bullets.map((b) => h('li', {}, b)))))),
-  });
-}
-
-// ---------------------------------------------------------------- 8 Close
-function close(openAppendix) {
-  const x = c.close;
-  return scene({
-    id: 'ch8', chapter: 8, head: { headline: x.headline }, cls: 'scene-close',
-    body: h('div', { class: 'close' },
-      h('p', { class: 'question' }, x.question),
-      h('p', { class: 'pointer' }, x.pointer),
-      h('button', { class: 'btn', type: 'button', onclick: openAppendix }, x.button)),
+    body: h('div', { class: 'ai-wrap' },
+      h('div', { class: 'cols3 ai' }, x.columns.map((col) =>
+        h('article', { class: 'card pop' },
+          h('h3', {}, col.title),
+          h('ul', {}, col.bullets.map((b) => h('li', {}, b)))))),
+      h('div', { class: 'close' },
+        h('p', { class: 'question' }, x.question),
+        h('p', { class: 'pointer' }, x.pointer),
+        h('button', { class: 'btn', type: 'button', onclick: openAppendix }, x.button))),
   });
 }
 
 export const buildScenes = ({ openAppendix }) =>
-  [hero(), issue(), landlords(), performance(), accruals(), warnings(), verdict(), ai(), close(openAppendix)];
+  [hero(), issue(), landlords(), performance(), accruals(), warnings(), verdict(), ai(openAppendix)];
 
 // ---------------------------------------------------------------- Appendix overlay
 export function buildAppendix() {
   const x = c.appendix;
   const table = (t) => h('div', { class: 'table-wrap' },
-    h('table', { class: 'data' },
-      h('caption', {}, t.unit),
+    t.title && h('h4', { class: 'table-title' }, t.title),
+    h('table', { class: `data ${t.text ? 'text' : ''}` },
+      t.unit && h('caption', {}, t.unit),
       h('thead', {}, h('tr', {}, t.head.map((hd) => h('th', { scope: 'col' }, hd)))),
       h('tbody', {}, t.rows.map((row) => h('tr', {}, row.map((cell, k) =>
         k === 0 ? h('th', { scope: 'row' }, cell.text) : h('td', {}, nd(cell.text, cell.tip))))))));
   const panel = (p, k) => h('section', {
-    class: `panel ${p.table && p.table.head.length > 6 ? 'wide' : ''}`, id: `ap-${p.id}`, role: 'tabpanel',
+    class: `panel ${[p.table, ...(p.tables ?? [])].some((t) => t && t.head.length > 6) ? 'wide' : ''}`, id: `ap-${p.id}`, role: 'tabpanel',
     'aria-labelledby': `ap-tab-${p.id}`, 'data-panel': k, hidden: k !== 0,
   },
     h('h3', {}, `${k + 1}. ${p.title}`),
     p.table && table(p.table),
+    p.tables && h('div', { class: 'tables' }, p.tables.map(table)),
     p.groups && h('div', { class: 'groups' }, p.groups.map((g) =>
       h('table', { class: 'data' }, h('caption', {}, g.title),
         h('tbody', {}, g.rows.map((r) => h('tr', { class: r[0] === 'Total' ? 'total' : '' }, h('th', { scope: 'row' }, r[0]), h('td', {}, r[1]))))))),

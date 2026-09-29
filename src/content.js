@@ -4,9 +4,9 @@
 import {
   J, F, L, YEARS, COS, d, s, r, note,
   sbraComparableRevenue, sbraComparableDupont, growth, dupont, accrualsExGain, mpwCfoLessLoans,
-  mpwSlRecOnRevenueBeforeReserves, mpwSlRecSeriesPreEvent,
-  mpwSlOnRentBilled, stewardChargesTotal, phpNoncashRevenue, mpwAltAcl, ohiParentEquityGap,
-  revenueMix,
+  mpwSlRecOnRevenueBeforeReserves,
+  stewardChargesTotal, phpNoncashRevenue, mpwAltAcl, ohiParentEquityGap,
+  revenueMix, niAttributable, ohiAclTotal,
 } from './derive.js';
 import { usd, pct, pctRange, mult, multRange, num, count, arrow, showDate, ND } from './format.js';
 
@@ -15,6 +15,7 @@ const PRE = [Y21, Y22, Y23];
 const FLOW = [Y22, Y23, Y24];
 const fy = (y) => `FY${y}`;
 const P = F.profiles_FY2024;
+const TEN = pct(F.concentration_disclosure_threshold, { decimals: 0 });
 
 export const NAMES = {
   MPW: 'Medical Properties Trust',
@@ -22,57 +23,63 @@ export const NAMES = {
   SBRA: 'Sabra Health Care REIT',
 };
 
+export const GROUP = 'Sliver 1A';
+export const PEOPLE = ['Annie Wang', 'Rachel Rosenberg', 'Shane Haynes'];
+
 export const footer =
   `Source: company Form 10-K filings ${fy(Y21)}–${fy(Y24)} (SEC EDGAR). GAAP figures only; FFO/AFFO excluded.`;
 
-export const authors = ['Annie Wang', 'Rachel Rosenberg', 'Shane Haynes'].join(' · ');
+export const authors = `${GROUP} · ${PEOPLE.join(' · ')}`;
 
 export const badges = {
-  pre: `Pre-event window ${fy(Y21)}–${fy(Y23)}`,
+  pre: `Pre-event window ${fy(Y21)}–${fy(Y23)}: filed before Steward’s May ${Y24} bankruptcy`,
   outcome: `Outcome window ${fy(Y24)}`,
   both: `Pre-event window: ${fy(Y21)}–${fy(Y23)} · Outcome window: ${fy(Y24)}`,
 };
 
+// One entry per main slide (chapter). The title card is part of slide 1.
 export const rail = [
-  'The issue', 'Three landlords', 'Who performed better?', 'Earnings vs. cash',
-  'The warning lights', 'The verdict', 'How we used AI', 'Questions',
+  'The issue', 'Business models', 'Performance', 'Earnings vs. cash',
+  'Pre-event risk', 'Verdict', 'AI use',
 ];
 
 const ratioSeries = (co, name, years) => years.map((y) => r(co, name, y));
 const pctSeries = (co, name, years) => arrow(ratioSeries(co, name, years).map((v) => pct(v)));
 const roeSeries = (co) => arrow(FLOW.map((y) => pct(r(co, 'ROE', y))));
+const GAIN = 'Gain on sale of real estate';
 
-// ---------------------------------------------------------------- Chapter 0
+// ---------------------------------------------------------------- Slide 1 · title card
 export const hero = {
-  eyebrow: 'MGT 402 · Peer Case 1',
+  eyebrow: `MGT 402 · Peer Case 1 · ${GROUP}`,
   title: 'Paper Rent',
   subtitle:
-    'Was Medical Properties Trust (MPW) paying its own rent — and would the financial statements have told you?',
+    'How well did Medical Properties Trust’s reported rent and earnings reflect its tenants’ ability to pay?',
+  people: PEOPLE.join(' · '),
   buildings: COS.map((co) => ({ co, name: NAMES[co] })),
   tokenLabels: { out: 'loan', back: 'rent', tenant: 'Tenant' },
   artTitle: 'Three healthcare REITs',
   artDesc: 'Outlined buildings for MPW, OHI and SBRA. A dollar token leaves MPW for its tenant as a loan and returns as rent.',
   cue: 'Scroll ↓ or press →',
   caption:
-    `The allegation (Viceroy Research, ${showDate(F.MPW_viceroy_report_date)}): MPW lends to its tenant, ` +
+    `The allegation (Viceroy Research, ${showDate(F.MPW_viceroy_report_date)}): MPW lends to its tenants, ` +
     'and the money comes back as rent.',
 };
 
-// ---------------------------------------------------------------- Chapter 1
+// ---------------------------------------------------------------- Slide 1 · the issue
 export const issue = {
-  headline: 'When does recognized rent stop being income?',
+  headline: 'How well did reported rent and earnings reflect tenants’ ability to pay?',
   body:
-    'A landlord books rent evenly over a lease (straight-line) and can lend money to the tenants who pay it. ' +
-    'Both let reported earnings run ahead of cash. The question is whether MPW’s did — and whether it ' +
-    'recognized in time that its tenants couldn’t pay.',
+    'Accrual accounting records rent when it is earned, not when it is paid, so revenue ahead of cash can be ' +
+    'normal. The case question is whether MPW’s tenants could pay what it recognized, and whether lending to ' +
+    'those same tenants made its earnings look stronger than its economics.',
   allegation:
     `On ${showDate(F.MPW_viceroy_report_date)}, short-seller Viceroy Research alleged that MPW was lending ` +
     'tenants the money to pay its rent.',
   statements: [
-    { title: 'Income statement', lines: ['Straight-line rent revenue', 'Reserves booked as negative revenue'] },
-    { title: 'Balance sheet', lines: ['Straight-line rent receivable', 'Loans to tenants', 'Allowance for credit losses (ACL)'] },
-    { title: 'Cash flow statement', lines: ['Net income vs. cash flow from operations (CFO)', 'The “straight-line rent” add-back'] },
-    { title: 'Footnotes', lines: ['Tenant concentration', 'Moves to cash basis', 'Write-offs'] },
+    { title: 'Income statement', lines: ['Rent revenue, incl. straight-line rent', 'Credit-loss provisions', 'Impairments'] },
+    { title: 'Balance sheet', lines: ['Straight-line rent receivable', 'Loans and investments in tenants', 'Allowance for credit losses'] },
+    { title: 'Cash flow statement', lines: ['Net income → CFO reconciliation', 'Straight-line rent deducted as non-cash revenue', 'Loans to tenants: investing'] },
+    { title: 'Footnotes', lines: ['Collectability and cash-basis moves', 'Tenant concentration', 'Exposure to tenants'] },
   ],
   explainer: {
     title: 'Straight-line rent',
@@ -81,221 +88,225 @@ export const issue = {
       tag: 'Illustrative lease',
     },
     desc: 'Illustrative lease. Cash rent rises in annual steps while straight-line revenue is flat and starts above cash; the gap accumulates as a receivable.',
-    caption: 'Revenue now, cash later. The receivable is a bet that the tenant lasts.',
+    caption:
+      'With annual escalators, early rent revenue exceeds the cash due, and the gap builds a receivable. ' +
+      'It is not an overdue bill, but it is collected only if the tenant lasts.',
   },
 };
 
-// ---------------------------------------------------------------- Chapter 2
+// ---------------------------------------------------------------- Slide 2 · business models
 const mixFor = (co) =>
   revenueMix(co, Y24).map((p) => ({ label: p.label, value: p.value, share: p.share, text: pct(p.share) }));
 
 export const landlords = {
-  headline: 'Same industry. Very different bets.',
+  headline: 'Same industry, very different bets.',
   columns: [
     {
       co: 'MPW', name: NAMES.MPW,
       big: count(P.MPW.properties), bigLabel: 'properties',
-      sub: `${count(P.MPW.tenants)} tenants`,
-      mix: P.MPW.mix,
-      largest: `Largest tenants: ${P.MPW.largest}`,
+      sub: `${count(P.MPW.tenants)} tenants, as of ${showDate(F.MPW_portfolio_date)}`,
+      mix: `Hospitals: ${P.MPW.mix}`,
+      largest: `Largest tenants, ${fy(Y24)} revenue: ${P.MPW.largest}`,
       was:
-        `Steward was the largest in ${fy(Y22)}: ${pct(F.MPW_steward_revenue_share_2022)} of revenue, ` +
-        `${pct(F.MPW_steward_share_of_assets[Y22])} of assets. It filed for bankruptcy in ${Y24}.`,
+        `Also lends to and invests in its operators. Steward, its largest tenant before bankruptcy, was ` +
+        `${pct(F.MPW_steward_share_of_assets[Y22])} of total assets at ${fy(Y22)} year-end.`,
     },
     {
       co: 'OHI', name: NAMES.OHI,
       big: count(P.OHI.facilities), bigLabel: 'facilities',
       sub: `${count(P.OHI.operators)} operators`,
-      mix: P.OHI.mix,
-      largest: `Largest tenant: ${P.OHI.largest}`,
+      mix: `Mostly nursing homes: ${P.OHI.mix}`,
+      largest: `Largest operator: ${P.OHI.largest} of ${fy(Y24)} revenue`,
+      was: 'Leases and mortgage loans to many operators; loans are a larger share of its assets than at SBRA.',
     },
     {
       co: 'SBRA', name: NAMES.SBRA,
       big: count(P.SBRA.properties), bigLabel: 'properties',
       sub: `${count(P.SBRA.loans)} loans · ${count(P.SBRA.preferred_equity)} preferred equity investments`,
       mix: P.SBRA.mix,
-      largest: `Largest tenant: ${P.SBRA.largest}`,
+      largest: `Largest tenant: ${P.SBRA.largest} in any year`,
+      was: 'Landlord and, through managers, operator of senior housing: it books residents’ fees as revenue.',
     },
   ],
   mixTitle: `${fy(Y24)} revenue mix`,
   mix: { MPW: mixFor('MPW'), OHI: mixFor('OHI'), SBRA: mixFor('SBRA') },
   callout:
-    `${pct(F.SBRA_resident_fee_share_2024)} of SBRA’s ${fy(Y24)} revenue is resident-fee revenue from its managed ` +
-    'senior housing, not rent. The ratios that follow use total revenue for all three companies.',
+    `${pct(F.SBRA_resident_fee_share_2024)} of SBRA’s ${fy(Y24)} revenue is resident fees from senior housing it ` +
+    'operates, with operating costs to match, so its revenue is not all rent. We use total revenue as the case ' +
+    'asks and flag the difference wherever a ratio depends on it.',
   mixNote:
     'Only MPW reports straight-line rent as its own revenue line. OHI’s sits inside rental income ' +
     `(${usd(Math.abs(d('OHI', L.slAdj, Y24)))} of non-cash straight-line rent and effective interest in ${fy(Y24)}, ` +
     'per its cash flow statement); SBRA’s sits inside rental revenue.',
   takeaway:
-    'MPW: few, large, financially fragile hospital operators. OHI: many nursing-home operators. ' +
-    'SBRA: diversified, part-landlord, part-operator.',
+    'MPW: few, large hospital operators, also financed by MPW. OHI: many nursing-home operators. ' +
+    'SBRA: diversified, part landlord, part operator.',
 };
 
-// ---------------------------------------------------------------- Chapter 3
-const sbraLev = FLOW.map((y) => r('SBRA', 'Leverage', y));
+// ---------------------------------------------------------------- Slide 3 · performance
+const sbraDebtAssets = FLOW.map((y) => r('SBRA', 'Debt / assets', y));
 
 export const performance = {
-  headline: 'OHI earned more, more steadily, with cash to show for it.',
-  formula: 'ROE = margin × turnover × leverage',
+  headline: 'OHI performed best: profitable every year, with cash flow above earnings.',
+  formula: 'Return on equity (ROE) = net income ÷ average total equity',
   years: FLOW,
   grid: COS.map((co) => ({
     co,
-    cells: FLOW.map((y) => {
-      const dp = dupont(co, y);
-      return {
-        year: y, ...dp,
-        text: { roe: pct(dp.roe), margin: pct(dp.margin), turnover: mult(dp.turnover, { decimals: 3 }), leverage: mult(dp.leverage) },
-      };
-    }),
+    cells: FLOW.map((y) => ({
+      year: y,
+      roe: r(co, 'ROE', y), ni: d(co, L.ni, y), cfo: d(co, L.cfo, y),
+      text: { roe: pct(r(co, 'ROE', y)), ni: usd(d(co, L.ni, y)), cfo: usd(d(co, L.cfo, y)) },
+    })),
   })),
+  labels: { ni: 'Net income', cfo: 'CFO' },
   points: [
-    `OHI ROE ${roeSeries('OHI')}; positive every year, CFO above net income every year.`,
-    `MPW ROE collapses ${roeSeries('MPW')} as Steward unwinds; CFO falls three years running ` +
+    `OHI: ROE ${roeSeries('OHI')}, CFO above net income every year. ${fy(Y22)} earnings include a ` +
+      `${usd(s('OHI', 'Gain on assets sold', Y22), { decimals: 1 })} gain on assets sold, so not all of it is rent.`,
+    `MPW: ROE ${roeSeries('MPW')} as Steward unwinds; CFO falls every year ` +
       `(${arrow([usd(d('MPW', L.cfo, Y21)), usd(d('MPW', L.cfo, Y24))])}).`,
-    `SBRA’s losses (${fy(Y21)}–${String(Y22).slice(2)}) are mostly joint-venture (JV) impairments; ${fy(Y22)} also ` +
-      `reflects real-estate impairments (${usd(d('SBRA', L.impair, Y22), { decimals: 1 })}) and a tenant write-off ` +
-      `(${usd(F.SBRA_north_american_writeoff_2022.total, { decimals: 1 })}). Lowest leverage (${multRange(sbraLev)}), improving.`,
+    `SBRA: losses in ${fy(Y21)}–${String(Y22).slice(2)} come mostly from joint-venture impairments; profitable ` +
+      `since ${fy(Y23)}. Lowest leverage of the three, though debt ÷ assets rose (${arrow(sbraDebtAssets.map((v) => pct(v)))}).`,
   ],
   verdict: 'OHI > SBRA > MPW',
   footnote:
-    `Average-balance ratios on total revenue (SBRA’s includes resident fees). Total equity incl. ` +
-    `noncontrolling interests (OHI parent-only equity is ` +
-    `~${pct(ohiParentEquityGap(Y23), { decimals: 0 })} lower).`,
+    'Consolidated net income and total equity, both including noncontrolling interests; average of opening and ' +
+    'closing equity. SBRA’s revenue includes resident fees. The full margin × turnover × leverage breakdown is in the appendix.',
 };
 
-// ---------------------------------------------------------------- Chapter 4
-const GAIN = 'Gain on sale of real estate';
+// ---------------------------------------------------------------- Slide 4 · earnings vs. cash
+const ACC_YEARS = YEARS;
+const proceeds22 = s('MPW', 'Net proceeds from sale of real estate (CFS)', Y22);
 
 export const accruals = {
-  headline: `In ${fy(Y22)}, MPW’s earnings rose while its cash fell.`,
+  headline: `In ${fy(Y22)}, MPW’s net income beat its cash flow, mostly because of a property-sale gain.`,
   sub:
-    'Depreciation is a large non-cash expense, so a landlord’s net income normally sits below its cash flow ' +
-    'from operations (CFO): accruals (net income − CFO) are normally negative.',
+    'Total accruals = net income − cash flow from operations (CFO). For a landlord they are normally negative: ' +
+    'depreciation lowers net income but uses no cash. Large negatives can also mean impairments and reserves, ' +
+    'so they are not a sign of strength.',
   barsTitle: 'Total accruals (net income − CFO)',
   bars: COS.map((co) => ({
     co,
-    values: PRE.map((y) => {
+    values: ACC_YEARS.map((y) => {
       const v = r(co, 'Accruals', y);
       return { year: y, value: v, text: usd(v, { decimals: 1, plus: true }) };
     }),
   })),
   exGain: {
     co: 'MPW', year: Y22, value: accrualsExGain(Y22),
-    text: `${usd(accrualsExGain(Y22), { decimals: 1, plus: true })} ex-gain`,
+    text: `${usd(accrualsExGain(Y22), { decimals: 1, plus: true })} ex-gain*`,
   },
   barNotes: {
     normal: 'Below zero is normal',
     glow:
-      `MPW ${fy(Y22)} turned positive (${usd(r('MPW', 'Accruals', Y22), { decimals: 1, plus: true })}) only through a ` +
-      `${usd(s('MPW', GAIN, Y22), { decimals: 1 })} gain on property sales, mainly the Macquarie sale; ` +
-      `${usd(accrualsExGain(Y22), { decimals: 1, plus: true })} without it`,
+      `MPW ${fy(Y22)}: ${usd(r('MPW', 'Accruals', Y22), { decimals: 1, plus: true })}, because net income included a ` +
+      `${usd(s('MPW', GAIN, Y22), { decimals: 1 })} gain on property sales`,
     loss: 'reserves & impairments',
+    exGain: '* Analytical, not GAAP: accruals as if the gain were excluded.',
   },
+  gainNote:
+    'A sale gain raises net income but brings in no operating cash: the CFO reconciliation deducts it, and the ' +
+    `${usd(proceeds22)} of sale proceeds is investing cash flow.`,
   lines: {
-    title: 'MPW: net income vs. CFO',
+    title: `MPW: net income vs. CFO, ${fy(Y21)}–${String(Y23).slice(2)}`,
     ni: PRE.map((y) => ({ year: y, value: d('MPW', L.ni, y), text: usd(d('MPW', L.ni, y)) })),
     cfo: PRE.map((y) => ({ year: y, value: d('MPW', L.cfo, y), text: usd(d('MPW', L.cfo, y)) })),
     labels: { ni: 'Net income', cfo: 'CFO' },
     callout:
-      `In ${fy(Y22)}, net income rises (${pct(growth('MPW', L.ni, Y22), { plus: true })}) ` +
-      `while CFO falls (${pct(r('MPW', 'CFO growth', Y22))}).`,
+      `In ${fy(Y22)}, net income rose ${pct(growth('MPW', L.ni, Y22))} ` +
+      `while CFO fell ${pct(Math.abs(r('MPW', 'CFO growth', Y22)))}.`,
   },
-  chipsTitle: `What explains the gap · MPW ${fy(Y22)}`,
+  chipsTitle: `How net income becomes CFO · MPW ${fy(Y22)}`,
   chips: [
-    `Gain on property sales ${usd(s('MPW', GAIN, Y22), { decimals: 1 })}`,
-    `Straight-line rent and other non-cash revenue ${usd(Math.abs(d('MPW', L.slAdj, Y22)), { decimals: 1 })}`,
-    `Offset: impairments ${usd(d('MPW', L.impair, Y22), { decimals: 1 })}`,
+    `Gain on property sales ${usd(s('MPW', GAIN, Y22), { decimals: 1 })}: deducted`,
+    `“Straight-line rent revenue and other” ${usd(Math.abs(d('MPW', L.slAdj, Y22)), { decimals: 1 })}: non-cash revenue, deducted`,
+    `Impairments ${usd(d('MPW', L.impair, Y22), { decimals: 1 })}: non-cash expense, added back`,
   ],
-  limit: {
-    title: 'What this test cannot see',
-    body:
-      'Rent paid out of the landlord’s own loan still counts in CFO; the loan sits in investing. ' +
-      'Accruals cannot detect round-tripping.',
-    test:
-      `Harshest case, CFO less every new loan advanced: ${arrow(PRE.map((y) => usd(mpwCfoLessLoans(y))))} ` +
-      `(reported ${arrow(PRE.map((y) => usd(d('MPW', L.cfo, y))))}).`,
-  },
   anomalies:
-    `SBRA ${fy(Y21)}–${String(Y22).slice(2)}: large negative accruals from impairments and write-offs while CFO held ` +
-    `at ${arrow([Y21, Y22].map((y) => usd(d('SBRA', L.cfo, y))))}. The cash was fine; the assets were marked down. ` +
-    `MPW ${fy(Y23)}–${String(Y24).slice(2)} is different: its cash fell too.`,
+    `Off-pattern years: MPW ${fy(Y22)} (positive, sale gain). MPW ${fy(Y23)}–${String(Y24).slice(2)} and SBRA ` +
+    `${fy(Y21)}–${String(Y22).slice(2)} (large negatives from reserves, write-offs and impairments). SBRA’s CFO held at ` +
+    `${arrow([Y21, Y22].map((y) => usd(d('SBRA', L.cfo, y))))}; MPW’s cash fell too.`,
+  limit: {
+    title: 'What CFO cannot show',
+    body:
+      'Making and collecting loans are investing activities (Class 7). If a tenant pays rent with money its ' +
+      'landlord lent it, the rent lands in CFO and the loan in investing, so CFO alone cannot show self-financed rent.',
+    test:
+      `Illustrative sensitivity, not GAAP CFO: CFO less all loans advanced was ` +
+      `${arrow(PRE.map((y) => usd(mpwCfoLessLoans(y))))} (reported ${arrow(PRE.map((y) => usd(d('MPW', L.cfo, y))))}). ` +
+      'Loans went to all borrowers, and not every advance funded rent.',
+  },
 };
 
-// ---------------------------------------------------------------- Chapter 5
-const spark = (co, values) => ({
+// ---------------------------------------------------------------- Slide 5 · pre-event risk
+const spark = (co, values, fmt = pct, years = PRE) => ({
   co,
-  values: values.map((v, k) => ({ year: PRE[k], value: v, text: pct(v) })),
-  latest: pct(values[values.length - 1]),
+  values: values.map((v, k) => ({ year: years[k], value: v, text: fmt(v) })),
+  latest: fmt(values[values.length - 1]),
 });
-const mpwSl = mpwSlRecSeriesPreEvent();
 const stewardAssets = PRE.map((y) => F.MPW_steward_share_of_assets[y]);
-
-const chargeItems = (o) =>
-  Object.entries(o).filter(([k]) => k !== 'total').map(([label, v]) => ({ label, value: v, text: usd(v) }));
+const aclUsd = (v) => usd(v, { decimals: 1 });
+const OP = F.OHI_largest_operator;
 
 export const warnings = {
-  headline: 'The signals were in the filings before Steward failed.',
+  headline: 'Before Steward failed, MPW’s filings showed concentrated tenant credit risk.',
   tiles: [
     {
-      title: 'Straight-line receivable ÷ revenue',
-      series: [
-        spark('MPW', mpwSl),
-        spark('OHI', ratioSeries('OHI', 'SL rec / revenue', PRE)),
-        spark('SBRA', ratioSeries('SBRA', 'SL rec / revenue', PRE)),
-      ],
+      title: 'Straight-line rent receivable ÷ total revenue',
+      series: COS.map((co) => spark(co, ratioSeries(co, 'SL rec / revenue', PRE))),
       summary:
-        `MPW ${pctRange(mpwSl)} vs OHI ${pctRange(ratioSeries('OHI', 'SL rec / revenue', PRE))} (SBRA ${ND})`,
-      caption: 'MPW carried half a year or more of revenue as rent not yet billed.',
-      footnote:
-        `MPW ${fy(Y23)} is shown before reserves on both sides (${pct(mpwSlRecOnRevenueBeforeReserves())}): ` +
-        `${usd(F.MPW_steward_charges_2023['Reserve of straight-line rent receivables'])} of straight-line reserves ` +
-        `added back to the receivable, ${usd(F.MPW_2023_revenue_reserves)} of reserves added back to revenue. ` +
-        `The raw ${pct(r('MPW', 'SL rec / revenue', Y23))} is distorted by them.`,
-      nd: { SBRA: note('SBRA', L.slRec) },
-    },
-    {
-      title: 'Allowance for credit losses (ACL) ÷ gross loans',
-      series: COS.map((co) => spark(co, ratioSeries(co, 'ACL / gross loans', PRE))),
-      summary:
-        `MPW ${pctSeries('MPW', 'ACL / gross loans', PRE)}, OHI ${pctSeries('OHI', 'ACL / gross loans', PRE)}, ` +
-        `SBRA ${pct(r('SBRA', 'ACL / gross loans', Y23))}`,
+        `Reported GAAP: MPW ${pctSeries('MPW', 'SL rec / revenue', PRE)}; OHI ` +
+        `${pctSeries('OHI', 'SL rec / revenue', PRE)}; SBRA not separately disclosed`,
       caption:
-        `Like for like (loans + financing leases), MPW reserved ${arrow(PRE.map((y) => pct(mpwAltAcl(y))))} against ` +
-        `OHI’s ${pctSeries('OHI', 'ACL / gross loans', PRE)}, while lending Steward a further ` +
-        `${usd(F.MPW_new_steward_loan_2022Q2)} in ${Y22}.`,
-      footnote:
-        'MPW’s allowance also covers financing leases, but the ratio plotted divides it by loans only, ' +
-        'so the plotted MPW line is overstated.',
+        'A balance built over years of leases, not unpaid rent. MPW’s is far larger relative to its revenue; its ' +
+        `${fy(Y23)} jump is partly a smaller denominator (${usd(F.MPW_2023_revenue_reserves)} of reserves cut revenue).`,
+      footnote: 'Lease length, escalators, acquisitions and sales all move this ratio.',
+      nd: { SBRA: note('SBRA', L.slRec) },
+      ndText: { SBRA: 'not disclosed' },
     },
     {
-      title: 'Largest tenant ÷ revenue',
+      title: 'Allowance for credit losses (level, $M)',
+      series: COS.map((co) => spark(co, PRE.map((y) => d(co, L.acl, y)), aclUsd)),
+      summary:
+        `As a share of the exposure each allowance covers: OHI ${pctSeries('OHI', 'ACL / gross loans', PRE)} ` +
+        `of loans; SBRA ${pctSeries('SBRA', 'ACL / gross loans', PRE)} of loans; MPW ` +
+        `${pctSeries('MPW', 'ACL / gross loans', PRE)} of loans and financing leases combined`,
+      caption:
+        `MPW’s allowance more than doubled in ${fy(Y22)}, the year it lent Steward a further ` +
+        `${usd(F.MPW_new_steward_loan_2022Q2)}, then fell in ${fy(Y23)} as reserves left with loans repaid or sold.`,
+      footnote:
+        'Not like for like: MPW reports one reserve for loans and financing leases, and hospital, nursing-home ' +
+        'and senior-housing borrowers differ. Lower coverage alone does not prove under-reserving.',
+    },
+    {
+      title: 'Largest tenant ÷ total revenue (as disclosed)',
       series: [
         spark('MPW', PRE.map(() => null)),
         spark('OHI', ratioSeries('OHI', 'Largest tenant / revenue', PRE)),
-        spark('SBRA', ratioSeries('SBRA', 'Largest tenant / revenue', PRE)),
+        spark('SBRA', PRE.map(() => null)),
       ],
       summary:
-        `MPW ${ND}; OHI ${pctSeries('OHI', 'Largest tenant / revenue', PRE)}; ` +
-        `SBRA <${pct(F.concentration_disclosure_threshold, { decimals: 0 })}, ${ND}`,
+        `MPW: Steward more than ${TEN} each year, exact share not disclosed. OHI: ` +
+        `${PRE.map((y) => `${OP[y].name} ${pct(r('OHI', 'Largest tenant / revenue', y))}`).join(' → ')} ` +
+        `(excluding write-offs). SBRA: no tenant at or above ${TEN}.`,
       caption:
-        `Steward ${arrow(stewardAssets.map((v) => pct(v)))} of assets. MPW’s ${fy(Y21)}–${String(Y23).slice(2)} 10-Ks ` +
-        `said only that Steward was more than ${pct(F.concentration_disclosure_threshold, { decimals: 0 })} of revenue; ` +
-        `the ${fy(Y22)} share (${pct(F.MPW_steward_revenue_share_2022)}) first appeared in the ` +
-        `${F.MPW_steward_share_first_disclosed_in}.`,
+        `Asset concentration, separately: Steward was ${arrow(stewardAssets.map((v) => pct(v)))} of MPW’s total ` +
+        'assets, on top of MPW’s loans to and investments in its operators.',
       pulse: 'MPW',
       nd: { MPW: note('MPW', L.largest), SBRA: note('SBRA', L.largest) },
+      ndText: { MPW: `>${TEN}`, SBRA: `<${TEN}` },
     },
     {
-      title: 'Debt ÷ assets',
+      title: 'Total debt ÷ total assets',
       series: COS.map((co) => spark(co, ratioSeries(co, 'Debt / assets', PRE))),
       summary:
         `MPW ${pctSeries('MPW', 'Debt / assets', PRE)}, OHI ${pctSeries('OHI', 'Debt / assets', PRE)}, ` +
-        `SBRA ${pctRange(ratioSeries('SBRA', 'Debt / assets', PRE))}`,
-      caption: `Leverage did not set MPW apart — until ${fy(Y24)}.`,
+        `SBRA ${pctSeries('SBRA', 'Debt / assets', PRE)}`,
+      caption: 'MPW’s leverage looked like OHI’s: leverage alone did not single MPW out.',
+      footnote: 'Debt = carrying value of all borrowings.',
     },
   ],
   timeline: {
-    title: 'When did they admit it?',
+    title: 'How each recognized that tenants would not pay',
     lanes: { above: 'OHI', below: 'MPW' },
     bands: PRE.map((y, k) => ({
       co: 'OHI', year: y,
@@ -303,8 +314,7 @@ export const warnings = {
         k === 0 ? `${count(F.OHI_operators_moved_to_cash_basis[y])} operators moved to cash basis`
         : k === 1 ? `${count(F.OHI_operators_moved_to_cash_basis[y])} more ` +
           `(${pct(s('OHI', "Cash-basis operators' share of revenue", y))} of revenue)`
-        : `${count(F.OHI_operators_moved_to_cash_basis[y])} more, and ` +
-          `${count(F.OHI_operators_moved_to_cash_basis[Y24])} in ${Y24}`,
+        : `${count(F.OHI_operators_moved_to_cash_basis[y])} more`,
     })),
     events: [
       { co: 'MPW', date: F.MPW_prospect_cash_basis_date, text: 'MPW moves Prospect to cash basis' },
@@ -315,9 +325,62 @@ export const warnings = {
       },
       { co: 'MPW', date: F.MPW_steward_cash_basis_date, text: 'MPW moves Steward to cash basis' },
     ],
+    note:
+      `OHI recognized non-payment early and often: ${arrow(PRE.map((y) => usd(d('OHI', L.writeoffs, y), { decimals: 1 })))} ` +
+      `of straight-line and receivable write-offs. MPW booked ${usd(F.MPW_credit_loss_provision[Y22], { decimals: 1 })} ` +
+      `of credit-loss provisions in ${fy(Y22)}; its large Steward write-downs came at ${fy(Y23)} year-end.`,
+  },
+};
+
+// ---------------------------------------------------------------- Slide 6 · verdict and FY2024 check
+const chargeItems = (o) =>
+  Object.entries(o).filter(([k]) => k !== 'total').map(([label, v]) => ({ label, value: v, text: usd(v) }));
+
+export const verdict = {
+  headline: 'MPW’s earnings looked stronger than its cash and tenant credit justified.',
+  position:
+    'We agree with the substance of Viceroy’s critique. MPW’s reported earnings presented a stronger picture than ' +
+    'its recurring cash generation and tenant credit exposure justified. The evidence supports concern about ' +
+    'economic performance; it does not establish fabricated rent or a GAAP violation.',
+  signals: [
+    {
+      kicker: 'Signal 1 · Straight-line receivable ÷ revenue',
+      title: 'Much of the rent was not yet cash.',
+      body:
+        `MPW ${pctRange(ratioSeries('MPW', 'SL rec / revenue', PRE))} vs OHI ` +
+        `${pctRange(ratioSeries('OHI', 'SL rec / revenue', PRE))}: more of MPW’s recognized rent depended on ` +
+        'tenants paying for years to come.',
+      limit: 'Limit: an accumulated balance, not overdue rent; lease terms differ.',
+    },
+    {
+      kicker: 'Signal 2 · Largest tenant ÷ revenue',
+      title: 'One fragile tenant, financed by MPW.',
+      body:
+        `Steward was more than ${TEN} of revenue and ${pctRange(stewardAssets)} of assets, and MPW lent it ` +
+        `a further ${usd(F.MPW_new_steward_loan_2022Q2)} in ${Y22}. OHI’s largest operator was near ${TEN}; SBRA had none that large.`,
+      limit: 'Limit: MPW gave only a threshold, not the exact revenue share.',
+    },
+  ],
+  support:
+    `Supporting, not independent: in ${fy(Y22)} net income rose ${pct(growth('MPW', L.ni, Y22))} ` +
+    `while CFO fell, mostly a sale gain. In ${fy(Y23)}, ${usd(phpNoncashRevenue())} of revenue arrived as Prospect ` +
+    'securities “in lieu of cash.”',
+  against: {
+    title: 'Strongest fact against us',
+    fact:
+      `A Wachtell Lipton review, engaged by ${F.MPW_wachtell_review.engaged_by}, found no evidence of ` +
+      'round-tripping or fraudulent revenue recognition.',
+    more: [
+      `MPW moved Steward to cash basis on ${showDate(F.MPW_steward_cash_basis_date)}, after the first shortfall ` +
+        `(${showDate(F.MPW_steward_first_shortfall_date)}) and before the bankruptcy.`,
+      `The positive ${fy(Y22)} accrual came from a sale gain, not from rent.`,
+    ],
+    response:
+      'This rules out the fraud version of the critique, not the credit risk. Our signals concern whether tenants ' +
+      'could pay, not whether revenue was invented, so our position stands in narrower form.',
   },
   check: {
-    title: `The ${fy(Y24)} check`,
+    title: `${fy(Y24)} outcome check`,
     waterfallTitle: 'Steward charges',
     charges: [
       {
@@ -333,100 +396,56 @@ export const warnings = {
       {
         label: 'MPW allowance for credit losses',
         value: arrow([usd(d('MPW', L.acl, Y23)), usd(d('MPW', L.acl, Y24))]),
-        sub: `after ${usd(F.MPW_credit_loss_provision[Y24])} of provisions`,
+        sub: `after ${usd(F.MPW_credit_loss_provision[Y24])} of provisions and ${usd(F.MPW_allowance_writeoffs_2024)} written off`,
       },
-      { label: `${fy(Y24)} debt ÷ assets`, value: pct(r('MPW', 'Debt / assets', Y24)), sub: '' },
+      {
+        label: `Steward’s ${fy(Y22)} revenue share`,
+        value: pct(F.MPW_steward_revenue_share_2022),
+        sub: `first disclosed in the ${F.MPW_steward_share_first_disclosed_in}, after the bankruptcy`,
+      },
     ],
     closing:
-      'The combination (heavy straight-line accruals, thin reserves, a concentration disclosed only as ' +
-      `“more than ${pct(F.concentration_disclosure_threshold, { decimals: 0 })} of revenue”, late moves to cash basis) ` +
-      'was MPW’s alone.',
+      'The outcome matches the pre-event risk. It does not show that GAAP required these losses earlier: ' +
+      'estimates change as new information arrives.',
   },
 };
 
-// ---------------------------------------------------------------- Chapter 6
-export const verdict = {
-  headline: 'Overstated? Yes, in substance. Fabricated? No evidence.',
-  signals: [
-    {
-      kicker: 'Signal 1 · Cash flows',
-      title: 'Earnings outran cash.',
-      body:
-        `${fy(Y22)} net income ${pct(growth('MPW', L.ni, Y22), { plus: true })}, CFO ` +
-        `${pct(r('MPW', 'CFO growth', Y22))}; CFO then fell every year to ${fy(Y24)}. Non-cash straight-line rent was ` +
-        `${pctRange([mpwSlOnRentBilled(Y21), mpwSlOnRentBilled(Y22)])} on top of every dollar of rent billed ` +
-        `(${fy(Y21)}–${String(Y22).slice(2)}).`,
-    },
-    {
-      kicker: 'Signal 2 · Balance sheet and footnotes',
-      title: 'Losses were recognized late.',
-      body:
-        `Allowance ${pctRange(PRE.map((y) => mpwAltAcl(y)))} of the loans and financing leases it covered vs OHI’s ` +
-        `${pctRange(ratioSeries('OHI', 'ACL / gross loans', PRE))} of loans; Steward’s revenue share given only as ` +
-        `more than ${pct(F.concentration_disclosure_threshold, { decimals: 0 })}; Steward moved to cash basis only ` +
-        `after it stopped paying in full. Then ${usd(stewardChargesTotal())} of Steward charges in ` +
-        `${fy(Y23)}–${String(Y24).slice(2)}.`,
-    },
-  ],
-  paper: {
-    title: 'Paper rent, literally.',
-    body:
-      `In ${Y23}, MPW recognized about ${usd(phpNoncashRevenue())} of revenue from Prospect, a tenant already on ` +
-      'cash basis, paid in equity of Prospect’s own managed-care business, “in lieu of cash.”',
-  },
-  against: {
-    title: 'Strongest fact against us',
-    fact:
-      `A Wachtell Lipton review, engaged by ${F.MPW_wachtell_review.engaged_by}, found no evidence of ` +
-      `round-tripping. The first Steward shortfall MPW disclosed was ${showDate(F.MPW_steward_first_shortfall_date)} ` +
-      `rent, after about ${usd(F.MPW_steward_payments_since_lease_start)} of rent and interest paid since ` +
-      `${F.MPW_steward_lease_start_year}.`,
-    response:
-      'This narrows our claim; it doesn’t reverse it. GAAP-compliant timing choices can still overstate economic ' +
-      'performance. The issue is when losses were recognized, not whether revenue was invented.',
-  },
-};
-
-// ---------------------------------------------------------------- Chapter 7
+// ---------------------------------------------------------------- Slide 7 · AI use
+// Group to confirm: each bullet must describe what the group actually did.
 export const ai = {
-  headline: 'AI did the retrieval. We did the judgment.',
+  headline: 'AI sped up retrieval. Definitions still needed our judgment.',
   columns: [
     {
       title: 'Helpful',
       bullets: [
-        'Pulled all 12 10-Ks and the SEC XBRL data in minutes',
-        'Full-text search across filings for “cash basis,” “straight-line,” concentration',
-        'Built and checked the ratio workbook from one data file',
+        'Pulled statement lines and footnotes from 12 10-Ks and the SEC’s XBRL data',
+        'Searched filings for “cash basis,” “straight-line” and tenant concentration',
+        'Kept every figure in one data file; a script checks each number on these slides against it',
       ],
     },
     {
       title: 'Bottlenecks',
       bullets: [
-        'SEC blocks automated requests without a User-Agent; our cloud tool was blocked, so we went through a browser',
-        'XBRL misses company-specific tags (MPW’s straight-line receivable, tenant concentration) → back to footnotes',
-        `Restated comparatives vs as-filed numbers; MPW’s 10-Ks gave no Steward revenue figure before ${fy(Y24)}`,
+        'SEC blocks automated requests that lack a contact User-Agent',
+        'XBRL lacks the key footnotes (allowance by instrument, tenant concentration): back to the filings',
+        `Definitions change: OHI’s tenant share excluded write-offs through ${fy(Y23)}, included them in ${fy(Y24)}`,
       ],
     },
     {
       title: 'Learned',
       bullets: [
-        'AI is fastest at finding, weakest at defining (what counts as a “loan to a tenant”?)',
+        'A first pass mixed scopes (common-shareholder income over total equity) and exposures (one allowance over two asset types); review caught both',
         'Every ratio needed a human definition decision',
         'Absence of disclosure is itself a data point',
       ],
     },
   ],
-};
-
-// ---------------------------------------------------------------- Close
-export const close = {
-  headline: 'Overstated in substance, not fabricated.',
   question: 'Questions?',
   pointer: 'Every input, ratio, definition and source is in the appendix.',
   button: 'Open the appendix (A)',
 };
 
-// ---------------------------------------------------------------- Appendix
+// ---------------------------------------------------------------- Appendix (10 slides)
 const RATIO_FMT = {
   ROE: pct, 'Net margin': pct, 'Asset turnover': (v) => mult(v, { decimals: 3 }), Leverage: mult, 'CFO/NI': mult,
   Accruals: (v) => num(v, { plus: true }),
@@ -439,21 +458,23 @@ const NULL_NOTE = {
   'SL rec / revenue': L.slRec,
   'Largest tenant / revenue': L.largest,
 };
-
-const SBRA_RATIO_NOTE =
-  'SBRA net margin and asset turnover use total revenue, as in Chapter 3. On comparable (rental + interest) ' +
-  `revenue*, net margin is ${arrow(FLOW.map((y) => pct(sbraComparableDupont(y).margin)))} and asset turnover ` +
-  `${arrow(FLOW.map((y) => mult(sbraComparableDupont(y).turnover, { decimals: 3 })))} ` +
-  `(${fy(FLOW[0])}–${String(FLOW[2]).slice(2)}). * Excludes resident fees and services, so the net income in the ` +
-  'numerator still includes senior-housing operations that the revenue in the denominator leaves out.';
+const RATIO_TIP = {
+  'MPW|2022|Largest tenant / revenue':
+    `Steward’s ${fy(Y22)} share, first disclosed in the ${F.MPW_steward_share_first_disclosed_in} (after the bankruptcy). ` +
+    `The ${fy(Y22)} 10-K said only “more than ${TEN}”.`,
+  'MPW|ACL / gross loans': 'Combined exposure: MPW’s one allowance over loans + financing leases (gross).',
+  'OHI|Largest tenant / revenue': note('OHI', L.largest),
+};
 
 const cols = COS.flatMap((co) => YEARS.map((y) => ({ co, year: y })));
 const cell = (text, tip = null) => ({ text, tip });
+const coYearHead = ['', ...cols.map((c) => `${c.co} ${fy(c.year)}`)];
 
-const supTable = (co, keys, fmt = num) => ({
-  unit: '$M',
+const supTable = (keys, { fmt = num, unit = '$M', title = null } = {}) => ({
+  title,
+  unit,
   head: ['', ...YEARS.map(fy)],
-  rows: keys.map(([label, get]) => [cell(label), ...YEARS.map((y) => cell(fmt(get(y))))]),
+  rows: keys.map(([label, get, f = fmt]) => [cell(label), ...YEARS.map((y) => cell(f(get(y))))]),
 });
 
 const urls = {
@@ -477,20 +498,46 @@ const urls = {
   ],
 };
 
+const SBRA_RATIO_NOTE =
+  'SBRA net margin and asset turnover use total revenue, as the case asks. On comparable (rental + interest) ' +
+  `revenue*, net margin is ${arrow(FLOW.map((y) => pct(sbraComparableDupont(y).margin)))} and asset turnover ` +
+  `${arrow(FLOW.map((y) => mult(sbraComparableDupont(y).turnover, { decimals: 3 })))} ` +
+  `(${fy(FLOW[0])}–${String(FLOW[2]).slice(2)}). * Excludes resident fees and services, so the net income in the ` +
+  'numerator still includes senior-housing operations that the revenue in the denominator leaves out.';
+
+// Audit trail: formula, unit, source (filing, statement or note, printed page), timing.
+const AUDIT = [
+  ['Net income (consolidated)', 'CFS first line, incl. noncontrolling interests', '$M',
+    'MPW FY2024 10-K CFS p.74 (FY2021: FY2023 10-K); OHI FY2024 10-K p.F-8; SBRA 10-K CFS', 'Filed each Feb–Mar'],
+  ['CFO', '“Net cash provided by operating activities”', '$M', 'Same CFS pages', 'Filed each Feb–Mar'],
+  ['Total accruals', 'Net income − CFO', '$M', 'Computed', 'All years'],
+  ['ROE', 'Net income ÷ average total equity (incl. NCI)', '%', 'Balance sheets: MPW p.70, OHI p.F-4', 'FY2022–FY2024'],
+  ['Net margin · asset turnover · leverage', 'NI ÷ revenue · revenue ÷ avg assets · avg assets ÷ avg equity', '% · × · ×',
+    'Income statements: MPW p.71, OHI p.F-5', 'FY2022–FY2024'],
+  ['Straight-line receivable ÷ revenue', 'Year-end “Straight-line rent receivables” ÷ “Total revenues”', '%',
+    'MPW balance sheet p.70, income statement p.71; OHI rent receivable note', 'Pre-event FY2021–FY2023'],
+  ['Allowance ÷ gross exposure', 'Allowance ÷ (net exposure + allowance); MPW: loans + financing leases', '%, $M',
+    'MPW Note 2 “Credit Losses” p.85 (FY2023 10-K p.83); OHI Note 9 p.F-46; SBRA loans receivable note', 'Pre-event FY2021–FY2023'],
+  ['Largest tenant ÷ revenue', 'As disclosed; MPW and SBRA give thresholds only', '%',
+    'MPW FY2022 10-K p.85, FY2023 10-K p.96; OHI p.F-43 / F-51 / F-52; SBRA Item 1', 'Each 10-K for its own year'],
+  ['Steward FY2022 revenue share', `Steward revenue ÷ total revenue`, '%', 'MPW FY2024 10-K concentration table p.100',
+    'First disclosed after the bankruptcy'],
+  ['Debt ÷ assets', 'Carrying value of all borrowings ÷ total assets', '%', 'Balance sheets', 'Pre-event FY2021–FY2023'],
+  ['Sale gain, proceeds', '“(Gain) loss on sale of real estate”; “Net proceeds from sale of real estate”', '$M',
+    'MPW FY2024 10-K CFS p.74', 'FY2022'],
+  ['CFO less loans advanced', 'CFO − “Investment in loans receivable” (investing)', '$M', 'MPW CFS p.74', 'Illustrative sensitivity'],
+];
+
 export const appendix = {
   title: 'Appendix',
-  hint: 'A toggles · Esc closes',
+  hint: 'A toggles · Esc closes · ← → step',
   closeLabel: 'Close',
   panels: [
     {
-      id: 'timeline', title: 'Timeline',
-      list: F.timeline.map((e) => `${e.date} · ${e.text}`),
-    },
-    {
-      id: 'inputs', title: 'Inputs: template line items',
+      id: 'inputs', title: 'Inputs',
       table: {
-        unit: '$M',
-        head: ['', ...cols.map((c) => `${c.co} ${fy(c.year)}`)],
+        unit: '$M. Net income, equity and CFO are all consolidated (incl. noncontrolling interests).',
+        head: coYearHead,
         rows: Object.values(L).map((item) => [
           cell(item),
           ...cols.map((c) => cell(num(d(c.co, item, c.year)), note(c.co, item))),
@@ -502,76 +549,169 @@ export const appendix = {
       note: SBRA_RATIO_NOTE,
       table: {
         unit: `Flow ratios ${fy(Y22)}–${fy(Y24)} on average balances; ${fy(Y21)} point-in-time ratios only. Accruals in $M.`,
-        head: ['', ...cols.map((c) => `${c.co} ${fy(c.year)}`)],
+        head: coYearHead,
         rows: RATIO_NAMES.map((name) => [
           cell(name),
           ...cols.map((c) => {
             if (c.year === Y21 && !POINT_IN_TIME.includes(name)) return cell('–', 'Needs a prior-year balance or flow.');
             const v = r(c.co, name, c.year);
-            return cell(RATIO_FMT[name](v), v == null ? note(c.co, NULL_NOTE[name]) : null);
+            const tip = RATIO_TIP[`${c.co}|${c.year}|${name}`] ?? RATIO_TIP[`${c.co}|${name}`] ??
+              (v == null ? note(c.co, NULL_NOTE[name]) : null);
+            return cell(RATIO_FMT[name](v), tip);
           }),
         ]),
       },
     },
     {
-      id: 'definitions', title: 'Definitions and choices',
-      list: [
-        'Equity: total equity including noncontrolling interests.',
-        'Debt: carrying value (net), sum of all borrowings.',
-        `SBRA comparable revenue: rental + interest, excluding resident fees (${arrow(YEARS.map((y) => usd(sbraComparableRevenue(y))))}).`,
-        'MPW “loans to tenants”: mortgage loans + other loans + loan-type investments in unconsolidated operating entities.',
-        `MPW’s allowance also covers financing leases. Supplementary ratio on loans + financing leases: ${arrow(YEARS.map((y) => pct(mpwAltAcl(y))))}.`,
-        'OHI largest-tenant revenue: implied from the disclosed percentage.',
+      id: 'performance', title: 'Performance detail',
+      tables: [
+        {
+          title: 'ROE = net margin × asset turnover × leverage (DuPont)',
+          unit: 'Consolidated scope. Leverage = average assets ÷ average equity.',
+          head: ['', ...COS.flatMap((co) => FLOW.map((y) => `${co} ${fy(y)}`))],
+          rows: [
+            ['ROE', (co, y) => pct(dupont(co, y).roe)],
+            ['Net margin', (co, y) => pct(dupont(co, y).margin)],
+            ['Asset turnover', (co, y) => mult(dupont(co, y).turnover, { decimals: 3 })],
+            ['Leverage', (co, y) => mult(dupont(co, y).leverage)],
+          ].map(([label, f]) => [cell(label), ...COS.flatMap((co) => FLOW.map((y) => cell(f(co, y))))]),
+        },
+        {
+          title: 'Net income: consolidated vs attributable to common stockholders',
+          unit: '$M. The slides use consolidated net income so it matches total equity and CFO.',
+          head: coYearHead,
+          rows: [
+            [cell('Consolidated (used)'), ...cols.map((c) => cell(num(d(c.co, L.ni, c.year))))],
+            [cell('Attributable to common'), ...cols.map((c) => cell(num(niAttributable(c.co, c.year))))],
+          ],
+        },
+        supTable([
+          ['OHI gain on assets sold', (y) => s('OHI', 'Gain on assets sold', y)],
+          ['MPW gain on sale of real estate', (y) => s('MPW', GAIN, y)],
+          ['SBRA comparable revenue (rental + interest)', (y) => sbraComparableRevenue(y)],
+        ], { title: 'Gains inside net income; SBRA revenue ex resident fees' }),
       ],
-    },
-    {
-      id: 'mpw-revenue', title: `MPW revenue decomposition ${fy(Y21)}–${String(Y24).slice(2)}`,
-      table: supTable('MPW', [
-        ['Rent billed', (y) => s('MPW', 'Rent billed', y)],
-        ['Straight-line rent', (y) => s('MPW', 'Straight-line rent revenue', y)],
-        ['Income from financing leases', (y) => s('MPW', 'Income from financing leases', y)],
-        ['Interest and other income', (y) => s('MPW', 'Interest and other income', y)],
-        ['Total revenue', (y) => d('MPW', L.revenue, y)],
-      ]),
-      note: note('MPW', L.revenue),
-    },
-    {
-      id: 'mpw-exposure', title: 'MPW balance-sheet exposure to operators',
-      table: supTable('MPW', [
-        ['Straight-line rent receivable', (y) => d('MPW', L.slRec, y)],
-        ['Interest and rent receivables (billed, unpaid)', (y) => s('MPW', 'Interest and rent receivables (billed, unpaid)', y)],
-        ['Loans to tenants', (y) => d('MPW', L.loans, y)],
-        ['Investment in financing leases', (y) => s('MPW', 'Investment in financing leases', y)],
-        ['Investments in unconsolidated operating entities', (y) => s('MPW', 'Investments in unconsolidated operating entities', y)],
-      ]),
       note:
-        `Billed receivables, all tenants, tripled in ${fy(Y22)}: ` +
-        arrow([Y21, Y22].map((y) => usd(s('MPW', 'Interest and rent receivables (billed, unpaid)', y)))) +
-        '. The balance is not broken out by tenant, so it says nothing about Steward alone.',
+        `OHI parent-only equity is ~${pct(ohiParentEquityGap(Y23), { decimals: 0 })} below total equity; ` +
+        'a common-shareholder ROE would pair attributable income with that equity. We do not mix the two.',
     },
     {
-      id: 'mpw-loans', title: 'MPW operating cash flow and loans advanced',
-      table: supTable('MPW', [
-        ['Cash flow from operations (CFO)', (y) => d('MPW', L.cfo, y)],
-        ['Investment in loans receivable', (y) => s('MPW', 'Investment in loans receivable (CFS)', y)],
-        ['Principal received on loans receivable', (y) => s('MPW', 'Principal received on loans receivable (CFS)', y)],
-        ['CFO less investment in loans receivable', (y) => mpwCfoLessLoans(y)],
-      ]),
+      id: 'cash', title: 'Earnings and cash detail',
+      tables: [
+        {
+          title: 'Net income, CFO and total accruals',
+          unit: '$M',
+          head: coYearHead,
+          rows: [
+            [cell('Net income'), ...cols.map((c) => cell(num(d(c.co, L.ni, c.year))))],
+            [cell('CFO'), ...cols.map((c) => cell(num(d(c.co, L.cfo, c.year))))],
+            [cell('Total accruals'), ...cols.map((c) => cell(num(r(c.co, 'Accruals', c.year), { plus: true })))],
+          ],
+        },
+        supTable([
+          ['Cash flow from operations (CFO)', (y) => d('MPW', L.cfo, y)],
+          ['Investment in loans receivable (investing)', (y) => s('MPW', 'Investment in loans receivable (CFS)', y)],
+          ['Principal received on loans receivable (investing)', (y) => s('MPW', 'Principal received on loans receivable (CFS)', y)],
+          ['CFO less loans advanced (illustrative)', (y) => mpwCfoLessLoans(y)],
+          ['Net proceeds from sale of real estate (investing)', (y) => s('MPW', 'Net proceeds from sale of real estate (CFS)', y)],
+        ], { title: 'MPW: operating cash, loans and sale proceeds' }),
+      ],
       note:
-        'Loans are to all borrowers, not only rent-paying tenants, and not every loan funded rent, so the last row ' +
-        'is a floor on cash earnings, not an estimate. Principal received is left out: it swings with one-off ' +
-        `repayments (${usd(s('MPW', 'Principal received on loans receivable (CFS)', Y21))} in ${fy(Y21)}).`,
+        `MPW ${fy(Y22)} accruals excluding the ${usd(s('MPW', GAIN, Y22), { decimals: 1 })} gain: ` +
+        `${usd(accrualsExGain(Y22), { decimals: 1, plus: true })}. Analytical only: GAAP net income includes the gain. ` +
+        'CFO less loans advanced is an illustrative sensitivity, not GAAP CFO and not a floor: loans went to all ' +
+        'borrowers, and principal received is left out because it swings with one-off repayments ' +
+        `(${usd(s('MPW', 'Principal received on loans receivable (CFS)', Y21))} in ${fy(Y21)}).`,
     },
     {
-      id: 'steward', title: 'Steward charges',
+      id: 'mpw', title: 'MPW revenue and exposure',
+      tables: [
+        supTable([
+          ['Rent billed', (y) => s('MPW', 'Rent billed', y)],
+          ['Straight-line rent', (y) => s('MPW', 'Straight-line rent revenue', y)],
+          ['Income from financing leases', (y) => s('MPW', 'Income from financing leases', y)],
+          ['Interest and other income', (y) => s('MPW', 'Interest and other income', y)],
+          ['Total revenue', (y) => d('MPW', L.revenue, y)],
+        ], { title: 'Revenue' }),
+        supTable([
+          ['Straight-line rent receivable', (y) => d('MPW', L.slRec, y)],
+          ['Interest and rent receivables (billed, unpaid)', (y) => s('MPW', 'Interest and rent receivables (billed, unpaid)', y)],
+          ['Loans to tenants', (y) => d('MPW', L.loans, y)],
+          ['Investment in financing leases', (y) => s('MPW', 'Investment in financing leases', y)],
+          ['Investments in unconsolidated operating entities', (y) => s('MPW', 'Investments in unconsolidated operating entities', y)],
+        ], { title: 'Balance-sheet exposure to operators' }),
+      ],
+      note:
+        `Sensitivity, not the reported ratio: adding back ${fy(Y23)} Steward straight-line reserves ` +
+        `(${usd(F.MPW_steward_charges_2023['Reserve of straight-line rent receivables'])}) to the receivable and ` +
+        `revenue reserves (${usd(F.MPW_2023_revenue_reserves)}) to revenue gives ` +
+        `${pct(mpwSlRecOnRevenueBeforeReserves())} instead of the reported ` +
+        `${pct(r('MPW', 'SL rec / revenue', Y23))}. The two add-backs are different amounts, so this is not a full ` +
+        '“before reserves” reconstruction.',
+    },
+    {
+      id: 'allowance', title: 'Allowance rollforwards',
+      tables: [
+        supTable([
+          ['Allowance, year-end (loans + financing leases)', (y) => d('MPW', L.acl, y)],
+          ['Provision for credit loss, net', (y) => s('MPW', 'Credit loss reserve: provision', y)],
+          ['Written off or related to instruments sold, repaid or satisfied',
+            (y) => s('MPW', 'Credit loss reserve: written off or related to instruments sold, repaid or satisfied', y)],
+          ['Coverage of loans + financing leases (gross)', (y) => mpwAltAcl(y), pct],
+        ], { title: 'MPW: one reserve for loans and financing leases' }),
+        supTable([
+          ['Real estate loans', (y) => s('OHI', 'Allowance: real estate loans', y)],
+          ['Non-real estate loans', (y) => s('OHI', 'Allowance: non-real estate loans', y)],
+          ['Loans subtotal (used)', (y) => d('OHI', L.acl, y)],
+          ['Direct financing leases', (y) => s('OHI', 'Allowance: direct financing leases', y)],
+          ['Unfunded loan commitments', (y) => s('OHI', 'Allowance: unfunded loan commitments', y)],
+          ['Total, all instruments', (y) => ohiAclTotal(y)],
+          ['Provision (recovery)', (y) => s('OHI', 'Allowance: provision (recovery)', y)],
+          ['Write-offs', (y) => s('OHI', 'Allowance: write-offs', y)],
+          ['Other additions', (y) => s('OHI', 'Allowance: other additions', y)],
+        ], { title: 'OHI: allowance by instrument (provision, write-offs and additions are for the total)' }),
+        supTable([
+          ['Allowance for loan losses', (y) => d('SBRA', L.acl, y)],
+          ['Provision (recovery)', (y) => s('SBRA', 'Allowance: provision (recovery)', y)],
+          ['Write-offs', (y) => s('SBRA', 'Allowance: write-offs', y)],
+        ], { title: 'SBRA: loans receivable' }),
+      ],
+      note:
+        'An allowance estimates amounts not expected to be collected. Raising the estimate is a provision, an ' +
+        'expense in the year. Writing off a loan already reserved uses the allowance and adds no new expense. ' +
+        'Lease revenue reversals and impairments are separate: they follow each filing’s own treatment. ' +
+        `${fy(Y21)} rollforward lines were not collected (n/d): the case uses the ${fy(Y22)}–${fy(Y24)} filings.`,
+    },
+    {
+      id: 'concentration', title: 'Concentration disclosures',
+      tables: [{
+        title: 'What each 10-K said about its own year',
+        unit: 'Share of total revenue unless stated',
+        head: ['', ...YEARS.map(fy)],
+        rows: [
+          [cell('MPW: Steward, revenue'), ...YEARS.map((y) => cell(y < Y24 ? `>${TEN}` : 'bankrupt'))],
+          [cell('MPW: Steward, total assets'), ...YEARS.map((y) => cell(y < Y24 ? pct(F.MPW_steward_share_of_assets[y]) : ND, y === Y21 ? F.MPW_asset_share_source : null))],
+          [cell('MPW: largest tenant, revenue (FY2024 10-K)'), ...YEARS.map((y) => cell(y === Y22 ? pct(r('MPW', 'Largest tenant / revenue', y)) : y === Y24 ? pct(r('MPW', 'Largest tenant / revenue', y)) : ND,
+            y === Y22 ? RATIO_TIP['MPW|2022|Largest tenant / revenue'] : null))],
+          [cell('OHI: largest operator'), ...YEARS.map((y) => cell(`${OP[y].name} ${pct(r('OHI', 'Largest tenant / revenue', y))}`, `${OP[y].basis}; ${OP[y].filing}`))],
+          [cell('OHI: basis'), ...YEARS.map((y) => cell(OP[y].basis))],
+          [cell('SBRA: largest tenant'), ...YEARS.map(() => cell(`<${TEN}`, J.story_facts.sources.SBRA_no_tenant_10pct))],
+        ],
+      }],
+      note:
+        `OHI changed its definition, not its history: its ${fy(Y24)} 10-K gives CommuniCare ` +
+        `${pct(F.OHI_communicare_2023_restated_basis)} of ${fy(Y23)} revenue including write-offs, against ` +
+        `${pct(r('OHI', 'Largest tenant / revenue', Y23))} excluding them in the ${fy(Y23)} 10-K. SBRA’s total ` +
+        'revenue includes resident fees, so a share of total revenue is not a share of rent.',
+    },
+    {
+      id: 'recognition', title: 'Recognition history',
       groups: [F.MPW_steward_charges_2023, F.MPW_steward_charges_2024].map((o, k) => ({
-        title: fy([Y23, Y24][k]),
+        title: `MPW Steward charges ${fy([Y23, Y24][k])}`,
         rows: [...chargeItems(o).map((it) => [it.label, it.text]), ['Total', usd(o.total)]],
       })),
-    },
-    {
-      id: 'ohi-cash', title: 'OHI cash-basis history',
-      table: {
+      tables: [{
+        title: 'OHI cash-basis history',
         unit: 'Write-offs in $M',
         head: ['', ...YEARS.map(fy)],
         rows: [
@@ -580,34 +720,44 @@ export const appendix = {
           [cell('Cash-basis operators’ share of revenue'), ...YEARS.map((y) => cell(pct(s('OHI', "Cash-basis operators' share of revenue", y))))],
           [cell('Straight-line / receivable write-offs'), ...YEARS.map((y) => cell(num(d('OHI', L.writeoffs, y)), note('OHI', L.writeoffs)))],
         ],
-      },
-    },
-    {
-      id: 'sabra', title: 'SBRA adjustments',
+      }],
       list: [
-        `Resident fees and services: ${arrow(YEARS.map((y) => usd(s('SBRA', 'Resident fees and services', y))))} (excluded from comparable revenue).`,
-        `Avamere write-off ${fy(Y21)}: ${usd(F.SBRA_avamere_writeoff_2021.straight_line, { decimals: 1 })} ` +
-          `(${usd(F.SBRA_avamere_writeoff_2021.total_incl_intangible, { decimals: 1 })} incl. above-market intangible).`,
-        `North American write-off ${fy(Y22)}: ${usd(F.SBRA_north_american_writeoff_2022.straight_line, { decimals: 1 })} ` +
-          `(${usd(F.SBRA_north_american_writeoff_2022.total, { decimals: 1 })} total).`,
-        `Enlivant JV impairments: ${usd(F.SBRA_enlivant_jv_impairment[Y21], { decimals: 1 })} (${fy(Y21)}) and ` +
-          `${usd(F.SBRA_enlivant_jv_impairment[Y22], { decimals: 1 })} (${fy(Y22)}), inside the loss from unconsolidated JVs ` +
-          `(${arrow([Y21, Y22].map((y) => usd(d('SBRA', L.jv, y), { decimals: 1 })))}).`,
+        `SBRA: Avamere write-off ${fy(Y21)} ${usd(F.SBRA_avamere_writeoff_2021.straight_line, { decimals: 1 })} ` +
+          `(${usd(F.SBRA_avamere_writeoff_2021.total_incl_intangible, { decimals: 1 })} incl. above-market intangible); ` +
+          `North American ${fy(Y22)} ${usd(F.SBRA_north_american_writeoff_2022.straight_line, { decimals: 1 })} ` +
+          `(${usd(F.SBRA_north_american_writeoff_2022.total, { decimals: 1 })} total); Enlivant JV impairments ` +
+          `${usd(F.SBRA_enlivant_jv_impairment[Y21], { decimals: 1 })} (${fy(Y21)}) and ` +
+          `${usd(F.SBRA_enlivant_jv_impairment[Y22], { decimals: 1 })} (${fy(Y22)}).`,
+        `MPW: Prospect to cash basis ${showDate(F.MPW_prospect_cash_basis_date)}; Steward to cash basis ` +
+          `${showDate(F.MPW_steward_cash_basis_date)}, reserving all unpaid rent and interest.`,
       ],
     },
     {
-      id: 'sources', title: 'Sources',
+      id: 'timeline', title: 'Timeline',
+      list: F.timeline.map((e) => `${e.date} · ${e.text}`),
+    },
+    {
+      id: 'audit', title: 'Audit trail and sources',
+      tables: [{
+        title: 'Calculation and source trail',
+        unit: 'Pages are printed page numbers in the Form 10-K named.',
+        head: ['Measure', 'Formula / line', 'Unit', 'Source', 'Timing'],
+        rows: AUDIT.map((row) => row.map((t) => cell(t))),
+        text: true,
+      }],
       links: COS.flatMap((co) => urls[co].map((url, k) => ({ label: `${co} ${fy(YEARS[k])} Form 10-K`, url }))),
       list: [
         `Viceroy Research, “Medical Properties (dis)Trust,” ${showDate(F.MPW_viceroy_report_date)}.`,
         'MPW press release, “Medical Properties Trust Releases Findings of Independent Investigation Into ' +
           `Short-seller Allegations,” ${showDate(F.MPW_wachtell_review.released)}.`,
+        'Debt: carrying value (net), sum of all borrowings. Loans to tenants: MPW mortgage + other loans + ' +
+          'loan-type investments in unconsolidated operating entities; OHI real estate + non-real estate loans (net).',
       ],
     },
   ],
 };
 
-export const chapters = { hero, issue, landlords, performance, accruals, warnings, verdict, ai, close, appendix };
+export const chapters = { hero, issue, landlords, performance, accruals, warnings, verdict, ai, appendix };
 export const meta = { footer, badges, rail, json: J };
 
 export const chrome = {

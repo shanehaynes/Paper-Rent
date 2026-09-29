@@ -106,17 +106,25 @@ export const landlords = {
       big: count(P.MPW.properties), bigLabel: 'properties',
       sub: `${count(P.MPW.tenants)} tenants, as of ${showDate(F.MPW_portfolio_date)}`,
       mix: `Hospitals: ${P.MPW.mix}`,
-      largest: `Largest tenants, ${fy(Y24)} revenue: ${P.MPW.largest}`,
+      largest:
+        `Largest tenant, ${fy(Y22)} revenue: Steward ${pct(F.MPW_steward_revenue_share_2022)} ` +
+        `(first disclosed in the ${F.MPW_steward_share_first_disclosed_in})`,
+      largestEmph: `Steward ${pct(F.MPW_steward_revenue_share_2022)}`,
+      largestLater: `Largest tenants, ${fy(Y24)} revenue: ${P.MPW.largest}`,
       was:
-        `Also lends to and invests in its operators. Steward, its largest tenant before bankruptcy, was ` +
+        `Also lends to and invests in its operators. Steward was also ` +
         `${pct(F.MPW_steward_share_of_assets[Y22])} of total assets at ${fy(Y22)} year-end.`,
+      wasEmph: `${pct(F.MPW_steward_share_of_assets[Y22])} of total assets`,
     },
     {
       co: 'OHI', name: NAMES.OHI,
       big: count(P.OHI.facilities), bigLabel: 'facilities',
       sub: `${count(P.OHI.operators)} operators`,
       mix: `Mostly nursing homes: ${P.OHI.mix}`,
-      largest: `Largest operator: ${P.OHI.largest} of ${fy(Y24)} revenue`,
+      largest:
+        `Largest operator: ${F.OHI_largest_operator[Y22].name} ${pct(r('OHI', 'Largest tenant / revenue', Y22))} ` +
+        `of ${fy(Y22)} revenue (excluding write-offs)`,
+      largestLater: `Largest operator: ${P.OHI.largest} of ${fy(Y24)} revenue`,
       was: 'Leases and mortgage loans to many operators; loans are a larger share of its assets than at SBRA.',
     },
     {
@@ -195,12 +203,17 @@ export const accruals = {
     co: 'MPW', year: Y22, value: accrualsExGain(Y22),
     text: `${usd(accrualsExGain(Y22), { decimals: 1, plus: true })} ex-gain*`,
   },
+  // MPW FY2023–24: the part of each bar that is Steward charges (all non-cash) vs. the rest.
+  split: [Y23, Y24].map((y) => {
+    const steward = F[`MPW_steward_charges_${y}`].total;
+    return { co: 'MPW', year: y, steward: -steward, text: usd(steward) };
+  }),
   barNotes: {
     normal: 'Below zero is normal',
     glow:
       `MPW ${fy(Y22)}: ${usd(r('MPW', 'Accruals', Y22), { decimals: 1, plus: true })}, because net income included a ` +
       `${usd(s('MPW', GAIN, Y22), { decimals: 1 })} gain on property sales`,
-    loss: 'reserves & impairments',
+    loss: ['Solid: Steward charges (non-cash)', 'Faded: depreciation & other'],
     exGain: '* Analytical, not GAAP: accruals as if the gain were excluded.',
   },
   gainNote:
@@ -278,22 +291,31 @@ export const warnings = {
         'and senior-housing borrowers differ. Lower coverage alone does not prove under-reserving.',
     },
     {
-      title: 'Largest tenant ÷ total revenue (as disclosed)',
-      series: [
-        spark('MPW', PRE.map(() => null)),
-        spark('OHI', ratioSeries('OHI', 'Largest tenant / revenue', PRE)),
-        spark('SBRA', PRE.map(() => null)),
+      title: 'Tenant concentration: two different measures',
+      groups: [
+        {
+          label: 'Largest tenant ÷ total revenue (as disclosed)',
+          series: [
+            spark('MPW', PRE.map(() => null)),
+            spark('OHI', ratioSeries('OHI', 'Largest tenant / revenue', PRE)),
+            spark('SBRA', PRE.map(() => null)),
+          ],
+          nd: { MPW: note('MPW', L.largest), SBRA: note('SBRA', L.largest) },
+          ndText: { MPW: `>${TEN}`, SBRA: `<${TEN}` },
+        },
+        {
+          label: `Steward ÷ MPW total assets · ${arrow(stewardAssets.map((v) => pct(v)))}`,
+          series: [spark('MPW', stewardAssets)],
+          pulse: 'MPW',
+        },
       ],
       summary:
-        `MPW: Steward more than ${TEN} each year, exact share not disclosed. OHI: ` +
+        `Revenue: MPW said only that Steward was above ${TEN} each year. OHI: ` +
         `${PRE.map((y) => `${OP[y].name} ${pct(r('OHI', 'Largest tenant / revenue', y))}`).join(' → ')} ` +
         `(excluding write-offs). SBRA: no tenant at or above ${TEN}.`,
       caption:
-        `Asset concentration, separately: Steward was ${arrow(stewardAssets.map((v) => pct(v)))} of MPW’s total ` +
-        'assets, on top of MPW’s loans to and investments in its operators.',
-      pulse: 'MPW',
-      nd: { MPW: note('MPW', L.largest), SBRA: note('SBRA', L.largest) },
-      ndText: { MPW: `>${TEN}`, SBRA: `<${TEN}` },
+        'Revenue share: how much of the rent one tenant pays. Asset share: how much of the balance sheet it ' +
+        'occupies. Before the bankruptcy, MPW gave an exact figure only for assets.',
     },
     {
       title: 'Total debt ÷ total assets',

@@ -94,6 +94,8 @@ ul, ol { list-style: none; }
 .chart .gap { fill: #d1d1d6; opacity: 0.22; }
 .chart .gap.gap-late { fill: var(--gray); opacity: 0.16; }
 .chart .bar.late { opacity: 0.45; }
+.chart .bar.rest { opacity: 0.4; }
+.chart .lbl.seg { fill: var(--bg); font-weight: 700; font-size: 20px; }
 .chart .marker .stem { stroke: currentColor; stroke-width: 2; stroke-dasharray: 4 6; }
 .chart .marker .cap { stroke: currentColor; stroke-width: 4; stroke-linecap: round; }
 .chart .nd-line { stroke: var(--gray); stroke-width: 2; stroke-dasharray: 5 7; }
@@ -145,6 +147,7 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 .profile .line { color: var(--text); font-size: 1rem; margin-top: 0.7rem; line-height: 1.35; }
 .profile .line.strong { font-weight: 600; font-size: 1.15rem; }
 .profile .line.dim { color: var(--gray); }
+.profile .line strong { color: var(--text); font-weight: 700; }
 .mix-row { display: grid; grid-template-columns: 6rem 1fr; align-items: start; margin-bottom: 0.9rem; }
 .mix-name { font-weight: 600; font-size: 1.1rem; line-height: 1.82rem; }
 .mix-labels { display: flex; gap: 1.8rem; margin-top: 0.4rem; line-height: 1.3; font-size: 0.96rem; }
@@ -202,6 +205,10 @@ html:not(.has-motion) #hero[data-beat="0"] :is(.token, .flow, .chart-hero > text
 .tile h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.6rem; }
 .tile-grid { display: flex; flex-direction: column; gap: 1.1rem; flex: 1; }
 .tile .rows { display: flex; flex-direction: column; gap: 0.5rem; }
+.tile.grouped .tile-grid { gap: 0.7rem; }
+.tile.grouped .row { padding-block: 0.1rem; }
+.tile.grouped .chart-spark { height: 2.2rem !important; }
+.tile .group-label { font-size: 0.9rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.2rem 0.5rem; }
 .tile .row { display: grid; grid-template-columns: 4.5rem 14rem 1fr; align-items: center; gap: 0.4rem; padding: 0.45rem 0.5rem; border-radius: 0.5rem; border: 1.5px solid transparent; }
 .tile .row .co { font-weight: 600; font-size: 1.05rem; }
 .tile .row .latest { font-size: 1.5rem; font-weight: 700; color: var(--text); text-align: right; letter-spacing: -0.01em; }

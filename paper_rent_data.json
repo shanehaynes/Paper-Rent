@@ -8,22 +8,22 @@
  "data": {
   "MPW": {
    "Total revenue": [
-    1544.7,
-    1542.9,
-    871.8,
-    995.5
+    1544.669,
+    1542.851,
+    871.799,
+    995.547
    ],
-   "Net income (loss) attributable to common stockholders": [
-    656,
-    902.6,
-    -556.5,
-    -2410.3
+   "Net income (loss), consolidated": [
+    656.94,
+    903.819,
+    -556.092,
+    -2408.287
    ],
    "Cash flow from operations (CFO)": [
-    811.7,
-    739,
-    505.8,
-    245.5
+    811.656,
+    739.01,
+    505.786,
+    245.483
    ],
    "Straight-line rent adjustment (non-cash)": [
     -288.7,
@@ -32,16 +32,16 @@
     -172.8
    ],
    "Total assets": [
-    20519.8,
+    20519.801,
     19658,
-    18304.8,
-    14294.6
+    18304.844,
+    14294.594
    ],
    "Total equity": [
-    8445.7,
-    8594.4,
-    7633.9,
-    4833.8
+    8445.671,
+    8594.407,
+    7633.865,
+    4833.783
    ],
    "Total debt (sum of all borrowings)": [
     11282.8,
@@ -52,8 +52,8 @@
    "Straight-line rent receivable (balance)": [
     728.5,
     787.2,
-    636,
-    700.8
+    635.987,
+    700.783
    ],
    "Loans to tenants (mortgage and other loans receivable)": [
     1089.9,
@@ -62,10 +62,10 @@
     267.8
    ],
    "Allowance for credit losses on loans": [
-    48.5,
-    121.1,
-    96,
-    511.5
+    48.527,
+    121.146,
+    96.001,
+    511.473
    ],
    "Straight-line rent / receivable write-offs during the year": [
     7.2,
@@ -75,9 +75,9 @@
    ],
    "Revenue from largest single tenant": [
     null,
-    427.9,
+    427.912,
     null,
-    205.6
+    205.582
    ],
    "Impairment charges (real estate and other)": [
     39.4,
@@ -94,22 +94,22 @@
   },
   "OHI": {
    "Total revenue": [
-    1062.8,
-    878.2,
-    949.7,
-    1051.4
+    1062.809,
+    878.244,
+    949.74,
+    1051.39
    ],
-   "Net income (loss) attributable to common stockholders": [
-    416.7,
-    426.9,
-    242.2,
-    406.3
+   "Net income (loss), consolidated": [
+    428.302,
+    438.841,
+    248.796,
+    417.804
    ],
    "Cash flow from operations (CFO)": [
-    722.1,
-    625.7,
-    617.7,
-    749.4
+    722.136,
+    625.727,
+    617.736,
+    749.43
    ],
    "Straight-line rent adjustment (non-cash)": [
     -50.7,
@@ -118,16 +118,16 @@
     -43
    ],
    "Total assets": [
-    9638.5,
-    9405.2,
-    9117.4,
-    9897.9
+    9638.478,
+    9405.163,
+    9117.402,
+    9897.891
    ],
    "Total equity": [
-    4108.2,
-    3803.3,
-    3762.3,
-    4730.8
+    4108.226,
+    3803.282,
+    3762.291,
+    4730.839
    ],
    "Total debt (sum of all borrowings)": [
     5253.5,
@@ -148,10 +148,10 @@
     1760.6
    ],
    "Allowance for credit losses on loans": [
-    144.5,
-    188.4,
-    222.2,
-    198.6
+    142.995,
+    185.228,
+    212.621,
+    194.044
    ],
    "Straight-line rent / receivable write-offs during the year": [
     37.3,
@@ -160,10 +160,10 @@
     4.2
    ],
    "Revenue from largest single tenant": [
-    101,
-    97.5,
-    109.2,
-    124.1
+    null,
+    null,
+    null,
+    null
    ],
    "Impairment charges (real estate and other)": [
     44.7,
@@ -180,22 +180,22 @@
   },
   "SBRA": {
    "Total revenue": [
-    569.5,
-    624.8,
-    647.5,
-    703.2
+    569.545,
+    624.811,
+    647.514,
+    703.235
    ],
-   "Net income (loss) attributable to common stockholders": [
-    -113.3,
-    -77.6,
-    13.8,
-    126.7
+   "Net income (loss), consolidated": [
+    -113.256,
+    -77.605,
+    13.756,
+    126.712
    ],
    "Cash flow from operations (CFO)": [
-    356.4,
-    315.7,
-    300.6,
-    310.5
+    356.39,
+    315.733,
+    300.571,
+    310.541
    ],
    "Straight-line rent adjustment (non-cash)": [
     25.8,
@@ -204,16 +204,16 @@
     -3.9
    ],
    "Total assets": [
-    5966.7,
-    5747.7,
-    5386.1,
-    5303.7
+    5966.707,
+    5747.672,
+    5386.15,
+    5303.679
    ],
    "Total equity": [
-    3379.5,
-    3056.4,
-    2802.5,
-    2741.3
+    3379.53,
+    3056.395,
+    2802.534,
+    2741.288
    ],
    "Total debt (sum of all borrowings)": [
     2394.5,
@@ -234,10 +234,10 @@
     381.5
    ],
    "Allowance for credit losses on loans": [
-    6.3,
-    6.6,
-    6.7,
-    6.1
+    6.344,
+    6.611,
+    6.665,
+    6.094
    ],
    "Straight-line rent / receivable write-offs during the year": [
     25.2,
@@ -310,10 +310,10 @@
     439.6
    ],
    "Gain on sale of real estate": [
-    52.5,
-    536.8,
-    -1.8,
-    478.7
+    52.471,
+    536.755,
+    -1.815,
+    478.693
    ],
    "Depreciation & amortization (CFS)": [
     333.8,
@@ -344,6 +344,30 @@
     53.3,
     501.6,
     214.4
+   ],
+   "Net income attributable to common stockholders": [
+    656.021,
+    902.597,
+    -556.476,
+    -2410.271
+   ],
+   "Net proceeds from sale of real estate (CFS)": [
+    null,
+    2185.574,
+    897.5,
+    1854.077
+   ],
+   "Credit loss reserve: provision": [
+    41.7,
+    99.009,
+    10.194,
+    1241.02
+   ],
+   "Credit loss reserve: written off or related to instruments sold, repaid or satisfied": [
+    null,
+    -26.39,
+    -35.339,
+    -825.548
    ]
   },
   "OHI": {
@@ -366,10 +390,10 @@
     0.205
    ],
    "Gain on assets sold": [
-    161.6,
-    360,
-    79.7,
-    13.2
+    161.609,
+    359.951,
+    79.668,
+    13.168
    ],
    "Depreciation & amortization": [
     342,
@@ -400,6 +424,66 @@
     3.1,
     3.5,
     6.3
+   ],
+   "Net income attributable to common stockholders": [
+    416.7,
+    426.9,
+    242.18,
+    406.326
+   ],
+   "Allowance: real estate loans": [
+    82.574,
+    101.36,
+    90.99,
+    71.249
+   ],
+   "Allowance: non-real estate loans": [
+    60.421,
+    83.868,
+    121.631,
+    122.795
+   ],
+   "Allowance: direct financing leases": [
+    0.53,
+    2.816,
+    2.489,
+    1.605
+   ],
+   "Allowance: unfunded loan commitments": [
+    0.941,
+    0.32,
+    7.054,
+    2.963
+   ],
+   "Allowance: total (all instruments)": [
+    144.466,
+    188.364,
+    222.164,
+    198.612
+   ],
+   "Allowance: provision (recovery)": [
+    null,
+    68.663,
+    45.555,
+    -10.041
+   ],
+   "Allowance: write-offs": [
+    null,
+    -24.765,
+    -36.955,
+    -13.511
+   ],
+   "Allowance: other additions": [
+    null,
+    0,
+    25.2,
+    0
+   ],
+   "Largest operator share of total revenue (disclosed)": [
+    0.095,
+    0.111,
+    0.115,
+    0.118
    ]
   },
   "SBRA": {
@@ -426,182 +510,200 @@
     187.8,
     183.1,
     169.6
+   ],
+   "Net income attributable to common stockholders": [
+    -113.256,
+    -77.605,
+    13.756,
+    126.712
+   ],
+   "Allowance: provision (recovery)": [
+    null,
+    0.267,
+    0.191,
+    -0.571
+   ],
+   "Allowance: write-offs": [
+    null,
+    0,
+    -0.137,
+    0
    ]
   }
  },
  "ratios": {
   "MPW": {
    "2021": {
-    "Accruals": -155.70000000000005,
-    "SL rec / revenue": 0.4716126108629507,
-    "ACL / gross loans": 0.04260365425158116,
-    "Debt / assets": 0.5498494137369759,
-    "Largest tenant / revenue": null
+    "Accruals": -154.7159999999999,
+    "SL rec / revenue": 0.47162207566799097,
+    "ACL / gross loans": 0.015203994577230444,
+    "Largest tenant / revenue": null,
+    "Debt / assets": 0.5498493869409357
    },
    "2022": {
-    "ROE": 0.10593834543224513,
-    "Net margin": 0.5850022684555058,
-    "Asset turnover": 0.07680360796260621,
-    "Leverage": 2.3578382755969747,
-    "CFO/NI": 0.8187458453356968,
-    "Accruals": 163.60000000000002,
-    "Revenue growth": -0.001165274810642769,
-    "CFO growth": -0.08956511026241232,
-    "SL rec / revenue": 0.5102080497763951,
-    "ACL / gross loans": 0.0727502102607233,
-    "Largest tenant / revenue": 0.2773348888456802,
+    "ROE": 0.10608155666893072,
+    "Net margin": 0.5858109435065343,
+    "Asset turnover": 0.07680116689313086,
+    "Leverage": 2.357841378425615,
+    "CFO/NI": 0.8176526494795971,
+    "Accruals": 164.80899999999997,
+    "Revenue growth": -0.0011769511785372222,
+    "CFO growth": -0.0895034349527386,
+    "SL rec / revenue": 0.5102242536706396,
+    "ACL / gross loans": 0.03609891219942156,
+    "Largest tenant / revenue": 0.2773514746401305,
     "Debt / assets": 0.5223522230135313
    },
    "2023": {
-    "ROE": -0.06858389356864243,
-    "Net margin": -0.6383344803854095,
-    "Asset turnover": 0.04592917276913188,
-    "Leverage": 2.3392961678056237,
-    "CFO/NI": -0.9088948787061994,
-    "Accruals": -1062.3,
-    "Revenue growth": -0.4349601399961113,
-    "CFO growth": -0.3155615696887686,
-    "SL rec / revenue": 0.729525120440468,
-    "ACL / gross loans": 0.06572191415074964,
+    "ROE": -0.06853372928430088,
+    "Net margin": -0.6378672148052476,
+    "Asset turnover": 0.04592906685284169,
+    "Leverage": 2.3393029153073104,
+    "CFO/NI": -0.909536551505866,
+    "Accruals": -1061.878,
+    "Revenue growth": -0.43494284282798534,
+    "CFO growth": -0.3155897755104802,
+    "SL rec / revenue": 0.7295110455506372,
+    "ACL / gross loans": 0.035657602920327255,
     "Largest tenant / revenue": null,
-    "Debt / assets": 0.5498120711507365
+    "Debt / assets": 0.5498107495480431
    },
    "2024": {
-    "ROE": -0.38664709609631287,
-    "Net margin": -2.421195379206429,
-    "Asset turnover": 0.06107474370693939,
-    "Leverage": 2.614708406522454,
-    "CFO/NI": -0.10185454092851512,
-    "Accruals": -2655.8,
-    "Revenue growth": 0.14189034182151872,
-    "CFO growth": -0.514630288651641,
-    "SL rec / revenue": 0.7039678553490708,
-    "ACL / gross loans": 0.6563582702425254,
-    "Largest tenant / revenue": 0.20652938221998995,
-    "Debt / assets": 0.6189819932002295
+    "ROE": -0.38632579296431846,
+    "Net margin": -2.419059070038883,
+    "Asset turnover": 0.061077555999585025,
+    "Leverage": 2.614722359822799,
+    "CFO/NI": -0.10193261849605136,
+    "Accruals": -2653.77,
+    "Revenue growth": 0.14194556314012763,
+    "CFO growth": -0.5146504648210903,
+    "SL rec / revenue": 0.7039175448271151,
+    "ACL / gross loans": 0.27841735195063017,
+    "Largest tenant / revenue": 0.2065015514084217,
+    "Debt / assets": 0.6189822530111734
    }
   },
   "OHI": {
    "2021": {
-    "Accruals": -305.40000000000003,
-    "SL rec / revenue": 0.13972525404591646,
-    "ACL / gross loans": 0.0996895481200414,
-    "Debt / assets": 0.5450536909270115,
-    "Largest tenant / revenue": 0.09503199096725631
+    "Accruals": -293.83399999999995,
+    "SL rec / revenue": 0.13972407083492897,
+    "ACL / gross loans": 0.09875379403934408,
+    "Largest tenant / revenue": 0.095,
+    "Debt / assets": 0.5450549350218987
    },
    "2022": {
-    "ROE": 0.10791885230360866,
-    "Net margin": 0.48610794807560914,
-    "Asset turnover": 0.09222997631762735,
-    "Leverage": 2.4070909435631678,
-    "CFO/NI": 1.4656828297025066,
-    "Accruals": -198.80000000000007,
-    "Revenue growth": -0.17369213398569805,
-    "CFO growth": -0.13349951530258963,
-    "SL rec / revenue": 0.18913687087223865,
-    "ACL / gross loans": 0.12936006591595714,
-    "Largest tenant / revenue": 0.11102254611705761,
-    "Debt / assets": 0.5621145749160039
+    "ROE": 0.11093738387169678,
+    "Net margin": 0.49968004335924865,
+    "Asset turnover": 0.09223488302473251,
+    "Leverage": 2.407081052057332,
+    "CFO/NI": 1.4258626700786845,
+    "Accruals": -186.88599999999997,
+    "Revenue growth": -0.17365773153972153,
+    "CFO growth": -0.13350532309703433,
+    "SL rec / revenue": 0.1891273951202627,
+    "ACL / gross loans": 0.12745969662021375,
+    "Largest tenant / revenue": 0.111,
+    "Debt / assets": 0.5621167862800464
    },
    "2023": {
-    "ROE": 0.06402664692820133,
-    "Net margin": 0.255027903548489,
-    "Asset turnover": 0.1025449990822023,
-    "Leverage": 2.4482658348313415,
-    "CFO/NI": 2.5503715937241953,
-    "Accruals": -375.50000000000006,
-    "Revenue growth": 0.08141653381917568,
-    "CFO growth": -0.012785680038357006,
-    "SL rec / revenue": 0.2134358218384753,
-    "ACL / gross loans": 0.12994152046783625,
-    "Largest tenant / revenue": 0.11498367905654416,
-    "Debt / assets": 0.5557834470353391
+    "ROE": 0.06577056357793389,
+    "Net margin": 0.26196222123949714,
+    "Asset turnover": 0.10254951190615337,
+    "Leverage": 2.4482699459776547,
+    "CFO/NI": 2.4829016543674336,
+    "Accruals": -368.94,
+    "Revenue growth": 0.08140790031016443,
+    "CFO growth": -0.012770745069335288,
+    "SL rec / revenue": 0.2134268326068187,
+    "ACL / gross loans": 0.125040210630191,
+    "Largest tenant / revenue": 0.115,
+    "Debt / assets": 0.5557833251182739
    },
    "2024": {
-    "ROE": 0.09567766775382369,
-    "Net margin": 0.3864371314437892,
-    "Asset turnover": 0.11058463447855149,
-    "Leverage": 2.2389115870530194,
-    "CFO/NI": 1.844449913856756,
-    "Accruals": -343.09999999999997,
-    "Revenue growth": 0.10708644835211123,
-    "CFO growth": 0.2132102962603204,
-    "SL rec / revenue": 0.22703062583222366,
-    "ACL / gross loans": 0.10136790526745611,
-    "Largest tenant / revenue": 0.11803309872550884,
-    "Debt / assets": 0.48888147990987985
+    "ROE": 0.09838634284415755,
+    "Net margin": 0.39738251267369856,
+    "Asset turnover": 0.1105836234024898,
+    "Leverage": 2.238902854424693,
+    "CFO/NI": 1.7937358187092511,
+    "Accruals": -331.626,
+    "Revenue growth": 0.10702929222734658,
+    "CFO growth": 0.2131881580480981,
+    "SL rec / revenue": 0.2270327851701081,
+    "ACL / gross loans": 0.09927332035910376,
+    "Largest tenant / revenue": 0.118,
+    "Debt / assets": 0.48888192444228773
    }
   },
   "SBRA": {
    "2021": {
-    "Accruals": -469.7,
+    "Accruals": -469.64599999999996,
     "SL rec / revenue": null,
-    "ACL / gross loans": 0.01808785529715762,
-    "Debt / assets": 0.40131060720331174,
-    "Largest tenant / revenue": null
+    "ACL / gross loans": 0.018211882506947157,
+    "Largest tenant / revenue": null,
+    "Debt / assets": 0.4013101363951674
    },
    "2022": {
-    "ROE": -0.024114731428393852,
-    "Net margin": -0.12419974391805377,
-    "Asset turnover": 0.10667213002799972,
-    "Leverage": 1.8201650118864494,
-    "CFO/NI": -4.068298969072165,
-    "Accruals": -393.29999999999995,
-    "Revenue growth": 0.09710272168568923,
-    "CFO growth": -0.11419753086419748,
+    "ROE": -0.024116191534239446,
+    "Net margin": -0.1242055597612718,
+    "Asset turnover": 0.1066741992896081,
+    "Leverage": 1.8201546786204004,
+    "CFO/NI": -4.068462083628632,
+    "Accruals": -393.338,
+    "Revenue growth": 0.09703535278160658,
+    "CFO growth": -0.11408008081034815,
     "SL rec / revenue": null,
-    "ACL / gross loans": 0.017988552739165983,
+    "ACL / gross loans": 0.018017993464355116,
     "Largest tenant / revenue": null,
-    "Debt / assets": 0.43613967326060865
+    "Debt / assets": 0.436141797931406
    },
    "2023": {
-    "ROE": 0.004710781887385005,
-    "Net margin": 0.021312741312741315,
-    "Asset turnover": 0.11631248989563313,
-    "Leverage": 1.900322586150984,
-    "CFO/NI": 21.782608695652176,
-    "Accruals": -286.8,
-    "Revenue growth": 0.03633162612035856,
-    "CFO growth": -0.04783021856192582,
+    "ROE": 0.004695738760445808,
+    "Net margin": 0.021244328307959366,
+    "Asset turnover": 0.11631477492634605,
+    "Leverage": 1.9003169350575848,
+    "CFO/NI": 21.85017446932248,
+    "Accruals": -286.81500000000005,
+    "Revenue growth": 0.036335787942273656,
+    "CFO growth": -0.048021587860629045,
     "SL rec / revenue": null,
-    "ACL / gross loans": 0.018132611637347768,
+    "ACL / gross loans": 0.01803959779681431,
     "Largest tenant / revenue": null,
-    "Debt / assets": 0.4482092794415254
+    "Debt / assets": 0.44820511868403223
    },
    "2024": {
-    "ROE": 0.04570871965078105,
-    "Net margin": 0.1801763367463026,
-    "Asset turnover": 0.13156466912383769,
-    "Leverage": 1.9282441646524042,
-    "CFO/NI": 2.4506708760852405,
-    "Accruals": -183.8,
-    "Revenue growth": 0.08602316602316606,
-    "CFO growth": 0.03293413173652682,
+    "ROE": 0.045712867404472945,
+    "Net margin": 0.18018443336864634,
+    "Asset turnover": 0.13157086048803962,
+    "Leverage": 1.9282417436923478,
+    "CFO/NI": 2.4507623587347687,
+    "Accruals": -183.829,
+    "Revenue growth": 0.08605373783423986,
+    "CFO growth": 0.033170199387166255,
     "SL rec / revenue": null,
-    "ACL / gross loans": 0.01573787409700722,
+    "ACL / gross loans": 0.015722637605329288,
     "Largest tenant / revenue": null,
-    "Debt / assets": 0.4558327205535758
+    "Debt / assets": 0.45583452543036634
    }
   }
  },
  "notes": {
-  "MPW|Total revenue": "10-K revenue table. FY2023 is net of ~$459M reserves (mostly Steward) booked as negative revenue; FY2023 straight-line rent revenue was -$127.9M.",
-  "MPW|Straight-line rent adjustment (non-cash)": "CFS line 'Straight-line rent revenue and other' (latest 10-K presentation).",
+  "MPW|Total revenue": "Consolidated statements of income, 'Total revenues' (FY2024 10-K p.71). FY2023 is net of ~$459M of reserves (mostly Steward) booked as negative revenue; FY2023 straight-line rent revenue was -$127.9M.",
+  "MPW|Straight-line rent adjustment (non-cash)": "CFS reconciliation line 'Straight-line rent revenue and other' (FY2024 10-K p.74): non-cash revenue DEDUCTED from net income to reach CFO. The line includes more than straight-line rent.",
   "MPW|Total debt (sum of all borrowings)": "Balance sheet 'Debt, net' (carrying value).",
-  "MPW|Straight-line rent receivable (balance)": "Face of balance sheet.",
+  "MPW|Straight-line rent receivable (balance)": "Face of balance sheet, 'Straight-line rent receivables' (FY2024 10-K p.70: 700,783 / 635,987 $ thousands).",
   "MPW|Loans to tenants (mortgage and other loans receivable)": "Mortgage loans + Other loans (BS) + loan-type investments in unconsolidated operating entities (Steward loan, Springstone/Lifepoint loan, Priory term loan, international JV loan) per Note 3 tables. Excludes $1.06-2.05B of financing-lease receivables that share the same CECL allowance.",
-  "MPW|Allowance for credit losses on loans": "Note 2 CECL rollforward: covers financing leases AND loans. Provision: 41.7 / 99.0 / 10.2 / 1,241.0; FY2024 write-offs against allowance 825.5.",
+  "MPW|Allowance for credit losses on loans": "Note 2 'Credit Losses' rollforward (FY2024 10-K p.85; FY2023 10-K p.83). One combined reserve for loans AND financing leases; MPW does not split it. Unfunded commitments are not mentioned. Provision 41.7 / 99.0 / 10.2 / 1,241.0; 'written off or related to instruments sold, repaid, or satisfied' (26.4) / (35.3) / (825.5).",
   "MPW|Straight-line rent / receivable write-offs during the year": "CFS 'Straight-line rent and other write-off'. FY2022 excludes ~$125M SL write-off netted inside the Macquarie sale gain. FY2023 = ~$95M Utah SL write-off + Q4 Steward reserves ($154M billed rent, $224M SL rent, $35M interest) + other tenants (~$95M).",
-  "MPW|Revenue from largest single tenant": "Steward. MPW did NOT disclose a dollar or % figure in the FY2021-FY2023 10-Ks (only '>10% of revenue' and share of total assets: 25.1% / 24.2% / 19.2%). FY2022 figure ($427.9M, 27.7%) first disclosed in FY2024 10-K. FY2024 largest = Circle ($205.6M, 20.7%).",
+  "MPW|Revenue from largest single tenant": "Steward. The FY2021-FY2023 10-Ks give no dollar or percentage figure: only that Steward, Circle and Prospect 'individually represented more than 10% of our total revenues' (FY2022 10-K p.85; the FY2023 10-K p.96 adds 'excluding reserves recorded during the year'). FY2022 Steward revenue ($427.9M, 27.7%) first appears in the FY2024 10-K concentration table (p.100), after the bankruptcy. FY2024 largest = Circle ($205.6M, 20.7%).",
   "MPW|Impairment charges (real estate and other)": "IS 'Real estate and other impairment charges, net'. FY2024 excludes a further $410.8M equity-interest real estate impairment in the equity-interest line.",
   "MPW|Income (loss) from unconsolidated joint ventures": "IS 'Earnings (loss) from equity interests'.",
   "OHI|Total equity": "Total incl. noncontrolling interest (~5% of total). Parent-only: 3,906.8 / 3,609.4 / 3,574.6 / 4,536.7.",
-  "OHI|Straight-line rent adjustment (non-cash)": "CFS 'Straight-line rent and effective interest receivables' (FY2023/FY2024 10-K presentation).",
+  "OHI|Straight-line rent adjustment (non-cash)": "CFS reconciliation line 'Straight-line rent and effective interest receivables' (FY2023/FY2024 10-K presentation): non-cash revenue deducted from net income to reach CFO.",
   "OHI|Total debt (sum of all borrowings)": "Revolver + secured borrowings + senior notes & other unsecured (net).",
   "OHI|Loans to tenants (mortgage and other loans receivable)": "Net: mortgage notes + other real estate loans + non-real-estate loans (Note 13). FY2021 = mortgage 835.1 + other investments 469.9.",
-  "OHI|Allowance for credit losses on loans": "Note 7 CECL rollforward total (real estate loans, non-RE loans, DFL). Provision 76.7 / 68.7 / 45.6 / (10.0).",
+  "OHI|Allowance for credit losses on loans": "Loans only: real estate loans + non-real estate loans, from Note 9 'Allowance for Credit Losses' rollforward (FY2024 10-K p.F-46). Excludes direct financing leases (0.5 / 2.8 / 2.5 / 1.6) and unfunded loan commitments (0.9 / 0.3 / 7.1 / 3.0), which OHI reports in the same table; all-instrument total 144.5 / 188.4 / 222.2 / 198.6.",
   "OHI|Straight-line rent / receivable write-offs during the year": "Note 5: SL + lease-inducement write-offs on cash-basis moves (36.0 / 119.8) + operator transitions (1.3 / 3.2); FY2023-24 incl. effective-yield interest write-offs.",
-  "OHI|Revenue from largest single tenant": "Implied $ from disclosed %: Consulate/LaVie 9.5% (FY21), LaVie 11.1% (FY22), CommuniCare 11.5% (FY23), CommuniCare 11.8% (FY24). FY21-23 % are 'excluding the impact of write-offs'.",
+  "OHI|Revenue from largest single tenant": "Not disclosed in dollars. OHI discloses only the largest operators' share of total revenue: Consulate 9.5% (FY2021, FY2021 10-K p.F-43), LaVie (formerly Consulate) 11.1% (FY2022, FY2022 10-K p.F-51), CommuniCare 11.5% (FY2023, FY2023 10-K p.F-52) - all 'excluding the impact of write-offs' - and CommuniCare 11.8% (FY2024, FY2024 10-K p.F-52) including write-offs. The ratio row shows these disclosed percentages; no dollar amount is implied.",
   "SBRA|Total revenue": "Includes resident fees & services (managed senior housing): 155.5 / 186.7 / 236.2 / 284.6. Comparable (rental + interest) revenue: 414.0 / 438.2 / 411.4 / 418.7.",
   "SBRA|Straight-line rent adjustment (non-cash)": "CFS 'Non-cash rental and related revenues' (SL rent + intangible amortization + write-offs; positive = write-offs exceeded accrual).",
   "SBRA|Straight-line rent receivable (balance)": "Not disclosed as a standalone balance (inside 'accounts receivable, prepaid expenses and other assets').",
@@ -613,7 +715,11 @@
   "OHI|Miscellaneous income": "FY2024 10-K consolidated statements of operations (FY2022-FY2024). FY2021 not collected: it falls outside the three years presented in that filing.",
   "MPW|Largest tenant share of total assets (Steward)": "Share of total assets per the 10-K concentration disclosures (FY2021-FY2023). No FY2024 figure in the data set.",
   "MPW|Investment in loans receivable (CFS)": "Consolidated statements of cash flows, investing activities, 'Investment in loans receivable': FY2021 from the FY2022 10-K (58,932), FY2022-FY2024 from the FY2024 10-K (207,542 / 250,223 / 420,324), $ thousands. Cash advanced on loans to all borrowers, not only rent-paying tenants.",
-  "MPW|Principal received on loans receivable (CFS)": "Consolidated statements of cash flows, investing activities, 'Principal received on loans receivable' (FY2024 10-K label: 'Principal received from sale and repayment of loans receivable'): FY2021 from the FY2022 10-K (1,595,708), FY2022-FY2024 from the FY2024 10-K (53,322 / 501,630 / 214,416), $ thousands."
+  "MPW|Principal received on loans receivable (CFS)": "Consolidated statements of cash flows, investing activities, 'Principal received on loans receivable' (FY2024 10-K label: 'Principal received from sale and repayment of loans receivable'): FY2021 from the FY2022 10-K (1,595,708), FY2022-FY2024 from the FY2024 10-K (53,322 / 501,630 / 214,416), $ thousands.",
+  "MPW|Net income (loss), consolidated": "Consolidated statements of cash flows, first line 'Net income (loss)' (includes noncontrolling interests; MPW's are small). FY2021 from the FY2023 10-K; FY2022-FY2024 from the FY2024 10-K p.74. Attributable to common: 656.0 / 902.6 / -556.5 / -2,410.3.",
+  "OHI|Net income (loss), consolidated": "Consolidated statements of cash flows, first line 'Net income' (includes noncontrolling interests in Omega OP units). FY2024 10-K p.F-8. Attributable to common: 416.7 / 426.9 / 242.2 / 406.3.",
+  "SBRA|Net income (loss), consolidated": "Consolidated statements of cash flows, first line 'Net income (loss)'. Noncontrolling interests are immaterial, so consolidated and attributable-to-common net income are the same to $0.1M.",
+  "SBRA|Allowance for credit losses on loans": "'Allowance for loan losses' on loans receivable (FY2024 10-K loans receivable note). Covers loans only; preferred equity investments are separate."
  },
  "story_facts": {
   "MPW_steward_share_of_assets": {
@@ -779,7 +885,46 @@
    "MPW_steward_payments_since_lease_start": "MPW FY2023 10-K, Note 3: 'Our initial lease transaction with Steward began in 2016, and they have made approximately $2 billion in rent and interest payments since that time.' Approximate figure.",
    "MPW_wachtell_review": "MPW press release, October 14, 2024, 'Medical Properties Trust Releases Findings of Independent Investigation Into Short-seller Allegations': the Board's Audit Committee engaged Wachtell, Lipton, Rosen & Katz; investigation completed February 2023; no evidence of round-tripping. 'Independent' is MPW's description.",
    "MPW_steward_share_first_disclosed_in": "FY2021, FY2022 and FY2023 10-Ks state only that Steward, Circle and Prospect 'individually represented more than 10% of our total revenues'. The FY2024 10-K concentration table gives Steward FY2022 revenue of $427,912 thousand (27.7%).",
-   "OHI_profile_mix": "OHI FY2024 10-K facility counts; facility-type abbreviations (SNF, ALF, ILF, MOB) spelled out."
-  }
+   "OHI_profile_mix": "OHI FY2024 10-K facility counts; facility-type abbreviations (SNF, ALF, ILF, MOB) spelled out.",
+   "MPW_gain_2022": "MPW FY2024 10-K CFS p.74: '(Gain) loss on sale of real estate' (536,755) for FY2022, deducted from net income; 'Net proceeds from sale of real estate' 2,185,574 in investing activities.",
+   "OHI_concentration_definition_change": "OHI FY2023 10-K p.F-52: CommuniCare 11.5% of FY2023 total revenues 'excluding the impact of write-offs'. OHI FY2024 10-K p.F-52: CommuniCare 11.7% of FY2023 and 11.8% of FY2024 total revenues, 'include the impact of straight-line rent receivable write-offs, lease inducement write-offs and effective yield interest' write-offs. A change of definition, not a restatement.",
+   "MPW_portfolio_date": "MPW FY2024 10-K Item 1 p.9: 'As of February 28, 2025, our portfolio consisted of 393 properties: 373 facilities are leased to 52 tenants'.",
+   "MPW_steward_cash_basis_date": "MPW FY2023 10-K Item 1: 'we moved to the cash basis of accounting for our leases and loans with Steward effective December 31, 2023.'",
+   "MPW_php_noncash": "MPW FY2023 10-K CFS: 'Non-cash revenue from debt and equity securities received' (81,706) deducted from FY2023 net income.",
+   "SBRA_no_tenant_10pct": "SBRA 10-K Item 1 'Significant Credit Concentrations', FY2021, FY2022, FY2023 and FY2024: 'no tenant relationship represented 10% or more of our total revenues.'"
+  },
+  "MPW_portfolio_date": "2025-02-28",
+  "MPW_asset_share_source": "Steward share of total assets as of Dec 31, 2021 and 2022 (25.1%, 24.2%): FY2022 10-K Item 1 'Significant Tenants', sum of Steward market rows (filed Mar 2023, pre-event). Dec 31, 2023 (19.2%): FY2023 10-K Item 1. The FY2021 10-K itself gave 18.5% of total PRO FORMA gross assets (a different definition).",
+  "OHI_largest_operator": {
+   "2021": {
+    "name": "Consulate",
+    "basis": "excl. write-offs",
+    "filing": "FY2021 10-K p.F-43"
+   },
+   "2022": {
+    "name": "LaVie",
+    "basis": "excl. write-offs",
+    "filing": "FY2022 10-K p.F-51"
+   },
+   "2023": {
+    "name": "CommuniCare",
+    "basis": "excl. write-offs",
+    "filing": "FY2023 10-K p.F-52"
+   },
+   "2024": {
+    "name": "CommuniCare",
+    "basis": "incl. write-offs",
+    "filing": "FY2024 10-K p.F-52"
+   }
+  },
+  "OHI_communicare_2023_restated_basis": 0.117,
+  "SBRA_no_tenant_10pct": {
+   "2021": true,
+   "2022": true,
+   "2023": true,
+   "2024": true
+  },
+  "MPW_ex_reserves_basis_from": "FY2023 10-K",
+  "MPW_steward_pro_forma_share_2021_as_filed": 0.185
  }
 }

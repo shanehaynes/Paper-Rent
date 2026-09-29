@@ -100,7 +100,7 @@ export function initMotion({ scenes, reduced }) {
   if (reduced) return;
   document.documentElement.classList.add('has-motion');
   for (const sc of scenes) {
-    if (sc.chapter === 0) { heroMotion(sc); continue; }
+    if (sc.id === 'hero') { heroMotion(sc); continue; }
     const els = [...sc.el.querySelectorAll('.draw, [data-grow], .pop')];
     for (let beat = 0; beat < sc.beats; beat++) {
       beatTimeline(sc, beat, els.filter((e) => entryBeat(e) === beat));

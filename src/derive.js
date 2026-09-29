@@ -10,7 +10,7 @@ export const F = json.story_facts;
 
 export const L = {
   revenue: 'Total revenue',
-  ni: 'Net income (loss) attributable to common stockholders',
+  ni: 'Net income (loss), consolidated',
   cfo: 'Cash flow from operations (CFO)',
   slAdj: 'Straight-line rent adjustment (non-cash)',
   assets: 'Total assets',
@@ -29,6 +29,7 @@ const i = (y) => YEARS.indexOf(Number(y));
 export const d = (co, item, y) => json.data[co][item][i(y)];
 export const s = (co, item, y) => json.supplementary[co][item][i(y)];
 export const r = (co, name, y) => json.ratios[co][String(y)]?.[name] ?? null;
+export const sOr = (co, item, y) => json.supplementary[co][item]?.[i(y)] ?? null;
 export const note = (co, item) => json.notes[`${co}|${item}`] ?? null;
 
 const avg = (co, item, y) => (d(co, item, y) + d(co, item, y - 1)) / 2;
@@ -55,9 +56,10 @@ export function sbraComparableDupont(y) {
   return { margin: d('SBRA', L.ni, y) / rev, turnover: rev / avg('SBRA', L.assets, y) };
 }
 
+// Analytical, not GAAP: accruals as if the property-sale gain had not been in net income.
 export const accrualsExGain = (y) => r('MPW', 'Accruals', y) - s('MPW', 'Gain on sale of real estate', y);
 
-// CFO with every new loan advanced treated as if it came straight back as rent or interest.
+// Illustrative sensitivity, not GAAP CFO: CFO less every loan advanced in the year (investing outflow).
 export const mpwCfoLessLoans = (y) => d('MPW', L.cfo, y) - s('MPW', 'Investment in loans receivable (CFS)', y);
 
 // MPW FY2023 straight-line receivable on revenue, both before reserves: the Steward straight-line
@@ -83,10 +85,16 @@ export const phpNoncashRevenue = () => {
   return p.financing_lease_income + p.interest_income;
 };
 
-// Allowance over everything it covers: loans + financing leases (gross of allowance).
+// MPW's combined allowance over the combined exposure it covers: loans + financing leases (gross).
 export const mpwAltAcl = (y) =>
   d('MPW', L.acl, y) /
   (d('MPW', L.loans, y) + s('MPW', 'Investment in financing leases', y) + d('MPW', L.acl, y));
+
+// Attributable-to-common net income vs the consolidated figure used everywhere else.
+export const niAttributable = (co, y) => s(co, 'Net income attributable to common stockholders', y);
+
+// OHI allowance on every instrument (loans, direct financing leases, unfunded commitments).
+export const ohiAclTotal = (y) => s('OHI', 'Allowance: total (all instruments)', y);
 
 export const ohiParentEquityGap = (y) => 1 - F.OHI_parent_only_equity[y] / d('OHI', L.equity, y);
 
@@ -119,7 +127,7 @@ export function revenueMix(co, y) {
 }
 
 // Negative JSON values that the page shows as magnitudes. verify-numbers.mjs rejects any other sign change.
-export const shownAsMagnitude = () => [d('MPW', L.slAdj, 2022), d('OHI', L.slAdj, 2024)];
+export const shownAsMagnitude = () => [d('MPW', L.slAdj, 2022), d('OHI', L.slAdj, 2024), r('MPW', 'CFO growth', 2022)];
 
 export function allDerived() {
   const out = [];

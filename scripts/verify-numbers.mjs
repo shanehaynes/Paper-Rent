@@ -3,8 +3,9 @@
 //    JSON or derived value through the formatter WITH ITS SIGN. A magnitude of a negative value is
 //    accepted only for the values listed in shownAsMagnitude();
 // 2. a token quoted from a JSON string sits in text that contains that whole string;
-// 3. every figure with a known position (DuPont grid, accruals chart, warning tiles, appendix input
-//    and ratio tables, named spot checks) equals the value expected there, computed here from the JSON.
+// 3. every figure with a known position (performance grid, accruals chart, risk tiles, appendix input
+//    and ratio tables, named spot checks) equals the value expected there, computed here from the JSON;
+// 4. the stored ratios equal a fresh computation from the inputs (scripts/compute-ratios.mjs --check).
 // Exempt from 1: years and footnote indices (neither carries $, % or ×).
 import { chromium } from 'playwright';
 import { readFile, readdir } from 'node:fs/promises';
@@ -12,6 +13,9 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { allDerived, shownAsMagnitude, J } from '../src/derive.js';
 import { usd, pct, mult, num } from '../src/format.js';
+import { execFileSync } from 'node:child_process';
+
+execFileSync(process.execPath, ['scripts/compute-ratios.mjs', '--check'], { stdio: 'inherit' });
 
 const MINUS = '−';
 // A leading hyphen is read as a minus sign; nothing else is altered, so signs are compared exactly.
@@ -73,8 +77,8 @@ const at = await page.evaluate(() => {
     inputs: rows(document.querySelector('#ap-inputs table')),
     ratios: rows(document.querySelector('#ap-ratios table')),
     spots: Object.fromEntries(Object.entries({
-      callout: '#ch2 .callout', point3: '#ch3 .points li:nth-child(3)', chips: '#ch4 .chips', sl: '#ch5 .tile .footnote',
-      signal1: '#ch6 .signal', against: '#ch6 .against .fact',
+      callout: '#ch2 .callout', point3: '#ch3 .points li:nth-child(3)', chips: '#ch4 .chips',
+      signal1: '#ch6 .signal', check: '#ch6 .check', slSummary: '#ch5 .tile .summary', mpwNote: '#ap-mpw .footnote',
     }).map(([k, sel]) => [k, [...document.querySelectorAll(sel)].map((e) => e.textContent).join(' | ')])),
   };
 });
@@ -119,27 +123,31 @@ const misplaced = [];
 const expect = (where, got, want) => { if (got !== want) misplaced.push(`${where}: shows "${got}", expected "${want}"`); };
 const has = (where, text, want) => { if (!text.includes(want)) misplaced.push(`${where}: expected "${want}" in "${text.slice(0, 90)}"`); };
 
-const DUPONT = {
-  roe: (co, y) => pct(R(co, 'ROE', y)), margin: (co, y) => pct(R(co, 'Net margin', y)),
-  turnover: (co, y) => mult(R(co, 'Asset turnover', y), { decimals: 3 }), leverage: (co, y) => mult(R(co, 'Leverage', y)),
+const NI = 'Net income (loss), consolidated';
+const CFO = 'Cash flow from operations (CFO)';
+const GRID = {
+  roe: (co, y) => pct(R(co, 'ROE', y)), ni: (co, y) => usd(D(co, NI, y)), cfo: (co, y) => usd(D(co, CFO, y)),
 };
-if (at.dupont.length !== COS.length * 3 * 4) misplaced.push(`DuPont grid: ${at.dupont.length} figures found`);
-for (const c of at.dupont) expect(`DuPont ${c.co} FY${c.year} ${c.k}`, c.text, DUPONT[c.k](c.co, c.year));
+if (at.dupont.length !== COS.length * 3 * 3) misplaced.push(`performance grid: ${at.dupont.length} figures found`);
+for (const c of at.dupont) expect(`performance ${c.co} FY${c.year} ${c.k}`, c.text, GRID[c.k](c.co, c.year));
 
 const GAIN = S('MPW', 'Gain on sale of real estate', 2022);
 const exGain = R('MPW', 'Accruals', 2022) - GAIN;
-COS.forEach((co, i) => PRE.forEach((y, k) =>
+COS.forEach((co, i) => Y.forEach((y, k) =>
   expect(`accruals chart ${co} FY${y}`, at.accruals[i]?.[k + 1], usd(R(co, 'Accruals', y), { decimals: 1, plus: true }))));
-expect('accruals chart ex-gain marker', at.accruals[3]?.[2], `${usd(exGain, { decimals: 1, plus: true })} ex-gain`);
+expect('accruals chart ex-gain marker', at.accruals[3]?.[2], `${usd(exGain, { decimals: 1, plus: true })} ex-gain*`);
 
 const slBefore = (D('MPW', 'Straight-line rent receivable (balance)', 2023) +
   J.story_facts.MPW_steward_charges_2023['Reserve of straight-line rent receivables']) /
   (D('MPW', 'Total revenue', 2023) + J.story_facts.MPW_2023_revenue_reserves);
-const TILES = ['SL rec / revenue', 'ACL / gross loans', 'Largest tenant / revenue', 'Debt / assets'];
-TILES.forEach((name, i) => COS.forEach((co, k) => {
-  const want = i === 0 && co === 'MPW' ? slBefore : i === 2 && co === 'MPW' ? null : R(co, name, 2023);
-  expect(`tile "${name}" ${co}`, at.tiles[i]?.rows[k]?.[1], pct(want));
-}));
+const TEN = pct(J.story_facts.concentration_disclosure_threshold, { decimals: 0 });
+const TILES = [
+  ['SL rec / revenue', (co) => (co === 'SBRA' ? 'not disclosed' : pct(R(co, 'SL rec / revenue', 2023)))],
+  ['Allowance level', (co) => usd(D(co, 'Allowance for credit losses on loans', 2023), { decimals: 1 })],
+  ['Largest tenant / revenue', (co) => ({ MPW: `>${TEN}`, SBRA: `<${TEN}` }[co] ?? pct(R(co, 'Largest tenant / revenue', 2023)))],
+  ['Debt / assets', (co) => pct(R(co, 'Debt / assets', 2023))],
+];
+TILES.forEach(([name, want], i) => COS.forEach((co, k) => expect(`tile "${name}" ${co}`, at.tiles[i]?.rows[k]?.[1], want(co))));
 
 const ITEMS = Object.keys(J.data.MPW);
 const COLS = COS.flatMap((co) => Y.map((y) => [co, y]));
@@ -157,14 +165,17 @@ Object.entries(RATIOS).forEach(([name, fmt], i) => COLS.forEach(([co, y], k) => 
   expect(`appendix ratios ${co} FY${y} ${name}`, at.ratios[i]?.[k + 1], v === undefined ? '–' : fmt(v));
 }));
 
-const cfoLessLoans = (y) => D('MPW', 'Cash flow from operations (CFO)', y) - S('MPW', 'Investment in loans receivable (CFS)', y);
+const cfoLessLoans = (y) => D('MPW', CFO, y) - S('MPW', 'Investment in loans receivable (CFS)', y);
+const range = (vals) => `${(Math.min(...vals) * 100).toFixed(0)}–${(Math.max(...vals) * 100).toFixed(0)}%`;
 has('Ch2 callout', at.spots.callout, pct(J.story_facts.SBRA_resident_fee_share_2024));
-has('Ch3 point 3', at.spots.point3, usd(D('SBRA', 'Impairment charges (real estate and other)', 2022), { decimals: 1 }));
+has('Ch3 point 3', at.spots.point3, [2022, 2023, 2024].map((y) => pct(R('SBRA', 'Debt / assets', y))).join(' → '));
 has('Ch4 gain chip', at.spots.chips, `Gain on property sales ${usd(GAIN, { decimals: 1 })}`);
 has('Ch4 loan test', at.spots.chips, PRE.map((y) => usd(cfoLessLoans(y))).join(' → '));
-has('Ch5 straight-line footnote', at.spots.sl, pct(slBefore));
-has('Ch6 signal 1', at.spots.signal1, pct(R('MPW', 'CFO growth', 2022)));
-has('Ch6 against', at.spots.against, usd(J.story_facts.MPW_steward_payments_since_lease_start));
+has('Ch5 reported SL ratio', at.spots.slSummary, pct(R('MPW', 'SL rec / revenue', 2023)));
+has('Appendix SL sensitivity', at.spots.mpwNote, pct(slBefore));
+has('Ch6 signal 1', at.spots.signal1, range(PRE.map((y) => R('MPW', 'SL rec / revenue', y))));
+has('Ch6 FY2024 allowance', at.spots.check, usd(D('MPW', 'Allowance for credit losses on loans', 2024)));
+has('Ch6 later-disclosed share', at.spots.check, pct(J.story_facts.MPW_steward_revenue_share_2022));
 
 // ---- no figures typed into source
 const typed = [];
@@ -178,8 +189,8 @@ for (const f of ['index.html', ...(await readdir('src')).filter((n) => n !== 'fo
 }
 
 console.log(`verify-numbers: ${count} tokens checked against ${allowed.size} formatted candidates from ${values.length} values.`);
-const placed = at.dupont.length + COS.length * PRE.length + 1 + TILES.length * COS.length +
-  (ITEMS.length + Object.keys(RATIOS).length) * COLS.length + 7;
+const placed = at.dupont.length + COS.length * Y.length + 1 + TILES.length * COS.length +
+  (ITEMS.length + Object.keys(RATIOS).length) * COLS.length + 9;
 console.log(`verify-numbers: ${placed} positioned figures checked against their expected values.`);
 if (orphans.size || typed.length || misplaced.length) {
   for (const [tok, ctx] of orphans) console.error(`  ORPHAN ${tok}   in "${ctx}"`);

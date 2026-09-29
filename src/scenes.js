@@ -9,6 +9,13 @@ import {
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
+// Bolds the first occurrence of `part` inside `text`.
+function emph(text, part) {
+  const i = part ? text.indexOf(part) : -1;
+  if (i < 0) return text;
+  return [text.slice(0, i), h('strong', {}, part), text.slice(i + part.length)];
+}
+
 function scene({ id, chapter, beats = 1, head, body, cls = '' }) {
   const label = c.rail[chapter - 1];
   const hid = `${id}-h`;
@@ -74,17 +81,21 @@ function issue() {
 function landlords() {
   const x = c.landlords;
   return scene({
-    id: 'ch2', chapter: 2, beats: 2, head: { headline: x.headline },
+    id: 'ch2', chapter: 2, beats: 3, head: { headline: x.headline },
     body: [
-      h('div', { class: 'layer cols3', 'data-show': '0-0' }, x.columns.map((col) =>
+      h('div', { class: 'layer cols3', 'data-show': '0-1' }, x.columns.map((col) =>
         h('article', { class: `profile c-${col.co} pop` },
           h('h3', {}, `${col.name} (${col.co})`),
           h('p', { class: 'big' }, col.big, h('span', {}, col.bigLabel)),
           h('p', { class: 'line strong' }, col.sub),
           h('p', { class: 'line' }, col.mix),
-          h('p', { class: 'line dim' }, col.largest),
-          col.was && h('p', { class: 'line' }, col.was)))),
-      h('div', { class: 'layer mix', 'data-show': '1-1' },
+          col.largestLater
+            ? h('div', { class: 'swap' },
+              h('p', { class: 'line dim', 'data-show': '0-0' }, emph(col.largest, col.largestEmph)),
+              h('p', { class: 'line dim', 'data-show': '1-1' }, col.largestLater))
+            : h('p', { class: 'line dim' }, col.largest),
+          col.was && h('p', { class: 'line' }, emph(col.was, col.wasEmph))))),
+      h('div', { class: 'layer mix', 'data-show': '2-2' },
         h('h3', { class: 'section-title' }, x.mixTitle),
         Object.entries(x.mix).map(([co, parts]) =>
           h('div', { class: `mix-row c-${co}` },
@@ -135,7 +146,7 @@ function accruals() {
     body: [
       h('div', { class: 'layer acc-a', 'data-show': '0-0' },
         divergingBars({
-          bars: x.bars, notes: x.barNotes, title: x.barsTitle, marker: x.exGain,
+          bars: x.bars, notes: x.barNotes, title: x.barsTitle, marker: x.exGain, split: x.split,
           glow: { co: x.exGain.co, year: x.exGain.year },
         }),
         h('p', { class: 'chart-title' }, x.barsTitle, ' · ', h('span', { class: 'c-MPW' }, x.barNotes.glow), '. ', x.gainNote),
@@ -159,18 +170,26 @@ function accruals() {
 }
 
 // ---------------------------------------------------------------- 5 Pre-event risk
-export function riskTile(t) {
-  const vals = t.series.flatMap((sr) => sr.values.map((v) => v.value)).filter((v) => v != null);
+function riskRows(g) {
+  const vals = g.series.flatMap((sr) => sr.values.map((v) => v.value)).filter((v) => v != null);
   const domain = [0, Math.max(...vals)];
-  return h('article', { class: `tile pop ${t.pulse ? 'has-pulse' : ''}` },
+  return h('div', { class: 'rows' }, g.series.map((sr) =>
+    h('div', { class: `row c-${sr.co} ${sr.co === 'MPW' ? 'is-mpw' : ''} ${g.pulse === sr.co ? 'pulse' : ''}` },
+      h('span', { class: 'co' }, sr.co),
+      sparkline({ co: sr.co, values: sr.values, domain, title: `${sr.co}: ${g.label}` }),
+      h('span', { class: `latest ${g.ndText?.[sr.co] ? 'is-nd' : ''}` },
+        nd(g.ndText?.[sr.co] ?? sr.latest, g.nd?.[sr.co])))));
+}
+
+// A tile holds one measure, or several labeled groups when a measure needs a separate companion.
+export function riskTile(t) {
+  const groups = t.groups ?? [{ label: t.title, series: t.series, pulse: t.pulse, nd: t.nd, ndText: t.ndText }];
+  return h('article', { class: `tile pop ${groups.some((g) => g.pulse) ? 'has-pulse' : ''} ${t.groups ? 'grouped' : ''}` },
     h('h3', {}, t.title),
     h('div', { class: 'tile-grid' },
-      h('div', { class: 'rows' }, t.series.map((sr) =>
-        h('div', { class: `row c-${sr.co} ${sr.co === 'MPW' ? 'is-mpw' : ''} ${t.pulse === sr.co ? 'pulse' : ''}` },
-          h('span', { class: 'co' }, sr.co),
-          sparkline({ co: sr.co, values: sr.values, domain, title: `${sr.co}: ${t.title}` }),
-          h('span', { class: `latest ${t.ndText?.[sr.co] ? 'is-nd' : ''}` },
-            nd(t.ndText?.[sr.co] ?? sr.latest, t.nd?.[sr.co]))))),
+      t.groups
+        ? groups.map((g) => h('div', { class: 'group' }, h('p', { class: 'group-label' }, g.label), riskRows(g)))
+        : riskRows(groups[0]),
       h('div', { class: 'tile-text' },
         h('p', { class: 'summary' }, t.summary),
         h('p', { class: 'caption' }, t.caption),

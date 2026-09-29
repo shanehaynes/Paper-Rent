@@ -148,6 +148,7 @@ const TILES = [
   ['Debt / assets', (co) => pct(R(co, 'Debt / assets', 2023))],
 ];
 TILES.forEach(([name, want], i) => COS.forEach((co, k) => expect(`tile "${name}" ${co}`, at.tiles[i]?.rows[k]?.[1], want(co))));
+expect('tile "Steward / MPW assets" MPW', at.tiles[2]?.rows[3]?.[1], pct(J.story_facts.MPW_steward_share_of_assets[2023]));
 
 const ITEMS = Object.keys(J.data.MPW);
 const COLS = COS.flatMap((co) => Y.map((y) => [co, y]));

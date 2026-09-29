@@ -19,7 +19,7 @@ p(c.landlords.headline); p();
 for (const col of c.landlords.columns) {
   p(`${col.co} · ${col.name}`, 2);
   p(`${col.big} ${col.bigLabel} · ${col.sub}`, 4);
-  p(col.mix, 4); p(col.largest, 4); if (col.was) p(col.was, 4);
+  p(col.mix, 4); p(col.largest, 4); if (col.largestLater) p(`[beat 2] ${col.largestLater}`, 4); if (col.was) p(col.was, 4);
 }
 p(); p(c.landlords.mixTitle, 2);
 for (const [co, parts] of Object.entries(c.landlords.mix)) {
@@ -59,10 +59,13 @@ p(c.warnings.headline); p();
 p('[beats 1-2] four measures, two per beat');
 c.warnings.tiles.forEach((t, k) => {
   p(`${k + 1}. ${t.title}`, 2);
-  for (const s of t.series) p(`${s.co}: ${s.values.map((v) => `FY${v.year} ${v.text}`).join(' | ')} → big number ${t.ndText?.[s.co] ?? s.latest}`, 6);
+  for (const g of t.groups ?? [t]) {
+    if (t.groups) p(`[${g.label}]`, 4);
+    for (const s of g.series) p(`${s.co}: ${s.values.map((v) => `FY${v.year} ${v.text}`).join(' | ')} → big number ${g.ndText?.[s.co] ?? s.latest}`, 6);
+  }
   p(t.summary, 6); p(`Caption: ${t.caption}`, 6);
   if (t.footnote) p(`Footnote: ${t.footnote}`, 6);
-  if (t.nd) for (const [co, n] of Object.entries(t.nd)) p(`tooltip (${co}): ${n}`, 6);
+  for (const g of t.groups ?? [t]) if (g.nd) for (const [co, n] of Object.entries(g.nd)) p(`tooltip (${co}): ${n}`, 6);
 });
 p(`[beat 3] ${c.warnings.timeline.title}`);
 for (const b of c.warnings.timeline.bands) p(`above · ${b.year} (year band) · ${b.co} ${b.text}`, 2);

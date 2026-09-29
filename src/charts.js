@@ -78,13 +78,15 @@ export function mixBar({ co, parts, title }) {
 }
 
 // ------------------------------------------------------------ Chapter 4: diverging accruals
-export function divergingBars({ bars, notes, title, glow, marker }) {
+export function divergingBars({ bars, notes, title, glow, marker, split = [] }) {
   const W = 1640, H = 560, m = { l: 10, r: 10, t: 96, b: 44 };
   const all = [...bars.flatMap((b) => b.values.map((v) => v.value)), marker.value];
   // One outlier far below the rest (MPW FY2024) is drawn clipped with a break mark so the
   // other bars stay readable; its label still shows the full value.
   const sorted = [...all].sort((a, b) => a - b);
-  const clip = sorted[0] < 1.8 * sorted[1] ? sorted[1] * 1.3 : null;
+  // A split bar's Steward segment always stays whole, so the clip sits below the largest one.
+  const floor = Math.min(0, ...split.map((p) => p.steward)) * 1.1;
+  const clip = sorted[0] < 1.8 * sorted[1] ? Math.min(sorted[1] * 1.3, floor) : null;
   const lo = clip ?? sorted[0];
   const y = scaleLinear([lo, max(all)], [H - m.b, m.t]);
   const xg = scaleBand(bars.map((b) => b.co), [m.l, W - m.r]).paddingInner(0.12);
@@ -111,12 +113,22 @@ export function divergingBars({ bars, notes, title, glow, marker }) {
       const ht = Math.abs(y(shown) - y(0));
       const cx = xi(v.year) + xi.bandwidth() / 2;
       const hot = glow.co === b.co && glow.year === v.year;
+      // A split bar: Steward charges from the baseline, the rest of the accrual beyond them.
+      const part = split.find((p) => p.co === b.co && p.year === v.year);
+      const cut = part ? y(part.steward) : null;
       add(svg, 
         s('rect', {
-          class: `bar c-${b.co} ${hot ? 'glow' : ''} ${b.co === 'MPW' ? '' : 'peer'}`,
+          class: `bar c-${b.co} ${hot ? 'glow' : ''} ${b.co === 'MPW' ? '' : 'peer'} ${part ? 'rest' : ''}`,
           'data-grow': 'v', 'data-base': y(0), 'data-order': v.year,
           x: xi(v.year), width: xi.bandwidth(), y: top, height: Math.max(ht, 1), rx: 3,
         }),
+        part && s('rect', {
+          class: `bar c-${b.co} pop`,
+          x: xi(v.year), width: xi.bandwidth(), y: y(0), height: cut - y(0), rx: 3,
+        }),
+        part && s('text', {
+          class: 'lbl seg pop', x: cx, y: (y(0) + cut) / 2 + 8, 'text-anchor': 'middle',
+        }, part.text),
         s('text', { class: 'axis pop', x: cx, y: pos ? y(0) + 30 : y(0) - 12, 'text-anchor': 'middle' }, fyLabel(v.year)),
         s('text', { class: `lbl val pop ${hot ? 'c-MPW strong' : ''}`, x: cx, y: pos ? top - 12 : top + ht + 28, 'text-anchor': 'middle' }, v.text),
         clipped && s('g', { class: 'break pop' },
@@ -133,7 +145,8 @@ export function divergingBars({ bars, notes, title, glow, marker }) {
   }
   add(svg, 
     s('text', { class: 'lbl note c-dim pop', x: xg('OHI') + xg.bandwidth() / 2, y: y(lo * 0.62), 'text-anchor': 'middle' }, notes.normal),
-    s('text', { class: 'lbl note c-neg pop', x: xg('MPW') + xg.bandwidth() + 6, y: y(lo * 0.8), 'text-anchor': 'start' }, notes.loss),
+    s('text', { class: 'lbl note c-MPW pop', x: xg('MPW') + xg.bandwidth() + 6, y: y(lo * 0.8), 'text-anchor': 'start' },
+      [notes.loss].flat().map((t, k) => s('tspan', { x: xg('MPW') + xg.bandwidth() + 6, dy: k ? 30 : 0 }, t))),
   );
   return fig;
 }
